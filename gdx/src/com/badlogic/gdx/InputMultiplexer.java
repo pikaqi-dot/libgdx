@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>输入处理器多路复用器，将事件委托给多个处理器</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

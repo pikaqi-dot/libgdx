@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>四叉树空间索引，用于浮点数坐标</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

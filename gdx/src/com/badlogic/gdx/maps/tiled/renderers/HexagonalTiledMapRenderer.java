@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>六边形 Tiled 地图渲染器。</b>
+ * 
  * Copyright 2013 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

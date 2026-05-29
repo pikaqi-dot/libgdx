@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>Tide 地图加载器，加载 Tide 编辑器格式的地图。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

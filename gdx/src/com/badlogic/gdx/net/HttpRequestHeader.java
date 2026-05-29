@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>HTTP 请求头常量</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>图片解析器接口，根据图片引用获取纹理。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

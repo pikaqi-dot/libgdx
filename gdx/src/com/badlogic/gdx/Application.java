@@ -20,186 +20,175 @@ import com.badlogic.gdx.utils.Clipboard;
 
 /**
  * <p>
- * An <code>Application</code> is the main entry point of your project. It sets up a window and rendering surface and manages the
- * different aspects of your application, namely {@link Graphics}, {@link Audio}, {@link Input} and {@link Files}. Think of an
- * Application being equivalent to Swing's <code>JFrame</code> or Android's <code>Activity</code>.
+ * <b>应用程序主入口接口。</b>
+ * <code>Application</code> 是项目的核心入口点。它创建一个窗口和渲染表面，并管理应用程序的不同模块，包括
+ * {@link Graphics}（图形）、{@link Audio}（音频）、{@link Input}（输入）和 {@link Files}（文件）。
+ * 可以将其理解为 Swing 中的 <code>JFrame</code> 或 Android 中的 <code>Activity</code>。
  * </p>
  * 
  * <p>
- * An application can be an instance of any of the following:
+ * Application 可以有以下几种具体实现：
  * <ul>
- * <li>a desktop application (see <code>JglfwApplication</code> found in gdx-backends-jglfw.jar)</li>
- * <li>an Android application (see <code>AndroidApplication</code> found in gdx-backends-android.jar)</li>
- * <li>a HTML5 application (see <code>GwtApplication</code> found in gdx-backends-gwt.jar)</li>
- * <li>an iOS application (see <code>IOSApplication</code> found in gdx-backends-robovm.jar)</li>
+ * <li>桌面应用（参见 gdx-backends-jglfw.jar 中的 <code>JglfwApplication</code>）</li>
+ * <li>Android 应用（参见 gdx-backends-android.jar 中的 <code>AndroidApplication</code>）</li>
+ * <li>HTML5 应用（参见 gdx-backends-gwt.jar 中的 <code>GwtApplication</code>）</li>
+ * <li>iOS 应用（参见 gdx-backends-robovm.jar 中的 <code>IOSApplication</code>）</li>
  * </ul>
- * Each application class has it's own startup and initialization methods. Please refer to their documentation for more
- * information.
+ * 每种实现都有各自的启动和初始化方法。
  * </p>
  * 
  * <p>
- * While game programmers are used to having a main loop, libGDX employs a different concept to accommodate the event based nature
- * of Android applications a little more. You application logic must be implemented in a {@link ApplicationListener} which has
- * methods that get called by the Application when the application is created, resumed, paused, disposed or rendered. As a
- * developer you will simply implement the ApplicationListener interface and fill in the functionality accordingly. The
- * ApplicationListener is provided to a concrete Application instance as a parameter to the constructor or another initialization
- * method. Please refer to the documentation of the Application implementations for more information. Note that the
- * ApplicationListener can be provided to any Application implementation. This means that you only need to write your program
- * logic once and have it run on different platforms by passing it to a concrete Application implementation.
+ * 虽然游戏开发者习惯使用主循环（main loop），但 libGDX 采用了不同的概念以更好地适应 Android 的事件驱动特性。
+ * 你的应用逻辑需要实现 {@link ApplicationListener} 接口，该接口包含由 Application 在创建、恢复、暂停、
+ * 销毁或渲染时调用的方法。作为开发者，你只需实现 ApplicationListener 接口并填充相应的功能。
+ * ApplicationListener 作为参数传递给具体的 Application 构造函数。这意味着你只需编写一次程序逻辑，
+ * 然后通过将其传递给不同的 Application 实现，即可在多个平台上运行。
  * </p>
  * 
  * <p>
- * The Application interface provides you with a set of modules for graphics, audio, input and file i/o.
+ * Application 接口提供以下模块：
  * </p>
  * 
  * <p>
- * {@link Graphics} offers you various methods to output visuals to the screen. This is achieved via OpenGL ES 2.0 or 3.0
- * depending on what's available an the platform. On the desktop the features of OpenGL ES 2.0 and 3.0 are emulated via desktop
- * OpenGL. On Android the functionality of the Java OpenGL ES bindings is used.
+ * {@link Graphics} 提供各种将视觉内容输出到屏幕的方法。通过 OpenGL ES 2.0 或 3.0 实现。
+ * 在桌面上使用桌面 OpenGL 模拟 OpenGL ES 2.0/3.0 的功能。Android 上使用 Java OpenGL ES 绑定。
  * </p>
  * 
  * <p>
- * {@link Audio} offers you various methods to output and record sound and music. This is achieved via the Java Sound API on the
- * desktop. On Android the Android media framework is used.
+ * {@link Audio} 提供播放和录制声音/音乐的方法。桌面上通过 Java Sound API 实现，Android 上使用 Android 媒体框架。
  * </p>
  * 
  * <p>
- * {@link Input} offers you various methods to poll user input from the keyboard, touch screen, mouse and accelerometer.
- * Additionally you can implement an {@link InputProcessor} and use it with {@link Input#setInputProcessor(InputProcessor)} to
- * receive input events.
+ * {@link Input} 提供从键盘、触摸屏、鼠标和加速度计轮询用户输入的方法。
+ * 此外，你也可以实现 {@link InputProcessor} 并通过 {@link Input#setInputProcessor(InputProcessor)} 接收输入事件。
  * </p>
  * 
  * <p>
- * {@link Files} offers you various methods to access internal and external files. An internal file is a file that is stored near
- * your application. On Android internal files are equivalent to assets. On the desktop the classpath is first scanned for the
- * specified file. If that fails then the root directory of your application is used for a look up. External files are resources
- * you create in your application and write to an external storage. On Android external files reside on the SD-card, on the
- * desktop external files are written to a users home directory. If you know what you are doing you can also specify absolute file
- * names. Absolute filenames are not portable, so take great care when using this feature.
+ * {@link Files} 提供访问内部和外部文件的方法。内部文件存储在应用附近；Android 上内部文件等同于 assets。
+ * 桌面上首先在 classpath 中查找，失败后搜索应用根目录。外部文件存储在外部存储（SD卡或用户主目录）中。
+ * 也可以指定绝对路径（不具可移植性，请谨慎使用）。
  * </p>
  * 
  * <p>
- * {@link Net} offers you various methods to perform network operations, such as performing HTTP requests, or creating server and
- * client sockets for more elaborate network programming.
+ * {@link Net} 提供网络操作方法，如执行 HTTP 请求、创建服务器和客户端 Socket。
  * </p>
  * 
  * <p>
- * The <code>Application</code> also has a set of methods that you can use to query specific information such as the operating
- * system the application is currently running on and so forth. This allows you to have operating system dependent code paths. It
- * is however not recommended to use these facilities.
+ * Application 还提供查询操作系统信息的方法，以及简单的日志记录功能（桌面输出到标准输出，Android 输出到 logcat）。
  * </p>
- * 
- * <p>
- * The <code>Application</code> also has a simple logging method which will print to standard out on the desktop and to logcat on
- * Android.
- * </p>
- * 
+ *
  * @author mzechner */
 public interface Application {
-	/** Enumeration of possible {@link Application} types
+	/** 可能的 {@link Application} 类型枚举
 	 * 
 	 * @author mzechner */
 	public enum ApplicationType {
 		Android, Desktop, HeadlessDesktop, Applet, WebGL, iOS
 	}
 
+	/** 不输出任何日志 */
 	public static final int LOG_NONE = 0;
+	/** 输出所有日志（包括调试信息） */
 	public static final int LOG_DEBUG = 3;
+	/** 输出信息和错误日志，不输出调试日志 */
 	public static final int LOG_INFO = 2;
+	/** 仅输出错误日志 */
 	public static final int LOG_ERROR = 1;
 
-	/** @return the {@link ApplicationListener} instance */
+	/** @return {@link ApplicationListener} 实例 */
 	public ApplicationListener getApplicationListener ();
 
-	/** @return the {@link Graphics} instance */
+	/** @return {@link Graphics} 实例，用于图形渲染操作 */
 	public Graphics getGraphics ();
 
-	/** @return the {@link Audio} instance */
+	/** @return {@link Audio} 实例，用于音频播放和录制 */
 	public Audio getAudio ();
 
-	/** @return the {@link Input} instance */
+	/** @return {@link Input} 实例，用于处理用户输入 */
 	public Input getInput ();
 
-	/** @return the {@link Files} instance */
+	/** @return {@link Files} 实例，用于文件读写操作 */
 	public Files getFiles ();
 
-	/** @return the {@link Net} instance */
+	/** @return {@link Net} 实例，用于网络操作 */
 	public Net getNet ();
 
-	/** Logs a message to the console or logcat */
+	/** 向控制台或 logcat 输出日志信息 */
 	public void log (String tag, String message);
 
-	/** Logs a message to the console or logcat */
+	/** 向控制台或 logcat 输出日志信息（带异常堆栈） */
 	public void log (String tag, String message, Throwable exception);
 
-	/** Logs an error message to the console or logcat */
+	/** 向控制台或 logcat 输出错误信息 */
 	public void error (String tag, String message);
 
-	/** Logs an error message to the console or logcat */
+	/** 向控制台或 logcat 输出错误信息（带异常堆栈） */
 	public void error (String tag, String message, Throwable exception);
 
-	/** Logs a debug message to the console or logcat */
+	/** 向控制台或 logcat 输出调试信息 */
 	public void debug (String tag, String message);
 
-	/** Logs a debug message to the console or logcat */
+	/** 向控制台或 logcat 输出调试信息（带异常堆栈） */
 	public void debug (String tag, String message, Throwable exception);
 
-	/** Sets the log level. {@link #LOG_NONE} will mute all log output. {@link #LOG_ERROR} will only let error messages through.
-	 * {@link #LOG_INFO} will let all non-debug messages through, and {@link #LOG_DEBUG} will let all messages through.
-	 * @param logLevel {@link #LOG_NONE}, {@link #LOG_ERROR}, {@link #LOG_INFO}, {@link #LOG_DEBUG}. */
+	/**
+	 * 设置日志级别。
+	 * {@link #LOG_NONE} 关闭所有日志输出；
+	 * {@link #LOG_ERROR} 仅允许错误信息；
+	 * {@link #LOG_INFO} 允许非调试信息通过；
+	 * {@link #LOG_DEBUG} 允许所有信息通过。
+	 * @param logLevel 日志级别：{@link #LOG_NONE}、{@link #LOG_ERROR}、{@link #LOG_INFO} 或 {@link #LOG_DEBUG}
+	 */
 	public void setLogLevel (int logLevel);
 
-	/** Gets the log level. */
+	/** 获取当前日志级别 */
 	public int getLogLevel ();
 
-	/** Sets the current Application logger. Calls to {@link #log(String, String)} are delegated to this
-	 * {@link ApplicationLogger} */
+	/** 设置当前的 ApplicationLogger。此后对 {@link #log(String, String)} 的调用将委托给此 {@link ApplicationLogger} */
 	public void setApplicationLogger (ApplicationLogger applicationLogger);
 
-	/** @return the current {@link ApplicationLogger} */
+	/** @return 当前使用的 {@link ApplicationLogger} */
 	public ApplicationLogger getApplicationLogger ();
 
-	/** @return what {@link ApplicationType} this application has, e.g. Android or Desktop */
+	/** @return 当前应用的 {@link ApplicationType} 类型，例如 Android 或 Desktop */
 	public ApplicationType getType ();
 
-	/** @return the Android API level on Android, the major OS version on iOS (5, 6, 7, ..), or 0 on the desktop. */
+	/** @return Android 上返回 API 级别，iOS 上返回主版本号（5, 6, 7...），桌面上返回 0 */
 	public int getVersion ();
 
-	/** @return the Java heap memory use in bytes */
+	/** @return Java 堆内存使用量（字节） */
 	public long getJavaHeap ();
 
-	/** @return the Native heap memory use in bytes */
+	/** @return 本地堆内存使用量（字节） */
 	public long getNativeHeap ();
 
-	/** Returns the {@link Preferences} instance of this Application. It can be used to store application settings across runs.
-	 * @param name the name of the preferences, must be useable as a file name.
-	 * @return the preferences. */
+	/** 返回该应用的 {@link Preferences} 实例，用于跨运行存储应用设置。
+	 * @param name 偏好设置名称，必须可用作文件名
+	 * @return 偏好设置对象 */
 	public Preferences getPreferences (String name);
 
 	public Clipboard getClipboard ();
 
-	/** Posts a {@link Runnable} on the main loop thread.
+	/** 在主循环线程上投递一个 {@link Runnable} 任务。
 	 * 
-	 * In a multi-window application, the {@linkplain Gdx#graphics} and {@linkplain Gdx#input} values may be unpredictable at the
-	 * time the Runnable is executed. If graphics or input are needed, they can be copied to a variable to be used in the Runnable.
-	 * For example:
+	 * 在多窗口应用中，Runnable 执行时 {@linkplain Gdx#graphics} 和 {@linkplain Gdx#input} 的值可能不可预测。
+	 * 如果需要图形或输入，请将其复制到局部变量中再在 Runnable 内使用。
 	 * <p>
 	 * <code> final Graphics graphics = Gdx.graphics;
 	 * 
-	 * @param runnable the runnable. */
+	 * @param runnable 要执行的任务 */
 	public void postRunnable (Runnable runnable);
 
-	/** Schedule an exit from the application. On android, this will cause a call to pause() and dispose() some time in the future,
-	 * it will not immediately finish your application. On iOS this should be avoided in production as it breaks Apples
-	 * guidelines */
+	/** 安排应用退出。在 Android 上，这将导致稍后调用 pause() 和 dispose()，但不会立即结束应用。
+	 * 在 iOS 上应避免在生产环境中使用，因为违反 Apple 的指南。 */
 	public void exit ();
 
-	/** Adds a new {@link LifecycleListener} to the application. This can be used by extensions to hook into the lifecycle more
-	 * easily. The {@link ApplicationListener} methods are sufficient for application level development.
-	 * @param listener */
+	/** 向应用添加新的 {@link LifecycleListener}。
+	 * 扩展可通过此方法更轻松地接入生命周期。对于应用级开发，{@link ApplicationListener} 的方法已经足够。
+	 * @param listener 生命周期监听器 */
 	public void addLifecycleListener (LifecycleListener listener);
 
-	/** Removes the {@link LifecycleListener}.
-	 * @param listener */
+	/** 移除 {@link LifecycleListener}。
+	 * @param listener 生命周期监听器 */
 	public void removeLifecycleListener (LifecycleListener listener);
 }

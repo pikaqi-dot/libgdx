@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>数组映射表，使用并行数组存储键值对</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

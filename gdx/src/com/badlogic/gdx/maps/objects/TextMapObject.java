@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>文本地图对象，包含文本字符串和样式信息。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

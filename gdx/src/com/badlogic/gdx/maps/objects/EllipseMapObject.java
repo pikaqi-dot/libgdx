@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>椭圆地图对象，由矩形边界定义的椭圆区域。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

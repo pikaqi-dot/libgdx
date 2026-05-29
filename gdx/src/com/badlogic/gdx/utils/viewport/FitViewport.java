@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Scaling;
 
 /** A ScalingViewport that uses {@link Scaling#fit} so it keeps the aspect ratio by scaling the world up to fit the screen, adding
+ * <b>适配视口，保持宽高比并缩放适应</b>
+ * 
  * black bars (letterboxing) for the remaining space.
  * @author Daniel Holderbaum
  * @author Nathan Sweet */

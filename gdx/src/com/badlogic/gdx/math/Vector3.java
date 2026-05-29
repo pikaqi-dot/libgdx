@@ -21,65 +21,84 @@ import java.io.Serializable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 
-/** Encapsulates a 3D vector. Allows chaining operations by returning a reference to itself in all modification methods.
+/** <b>3D 向量类。</b>
+ * 封装了一个三维向量 (x, y, z)。所有修改方法都返回对自身的引用，支持链式调用。
+ * 
+ * <p>常用常量：{@link #X}（X 轴单位向量）、{@link #Y}、{@link #Z}、
+ * {@link #Zero}（零向量）、{@link #One}（所有分量为1的向量）</p>
+ * 
+ * <p>主要功能：<br>
+ * - 加减乘除：{@link #add(Vector3)}、{@link #sub(Vector3)}、{@link #scl(float)}<br>
+ * - 向量长度：{@link #len()}、{@link #nor()}（归一化）<br>
+ * - 点积/叉积：{@link #dot(Vector3)}、{@link #crs(Vector3)}<br>
+ * - 矩阵变换：{@link #mul(Matrix4)}（仿射变换）、{@link #rot(Matrix4)}（仅旋转缩放）<br>
+ * - 投影：{@link #prj(Matrix4)}（透视投影）<br>
+ * - 四元数旋转：{@link #mul(Quaternion)}<br>
+ * - 球面线性插值：{@link #slerp(Vector3, float)}</p>
+ *
  * @author badlogicgames@gmail.com */
 public class Vector3 implements Serializable, Vector<Vector3> {
 	private static final long serialVersionUID = 3840054589595372522L;
 
-	/** the x-component of this vector **/
+	/** 向量的 x 分量 **/
 	public float x;
-	/** the y-component of this vector **/
+	/** 向量的 y 分量 **/
 	public float y;
-	/** the z-component of this vector **/
+	/** 向量的 z 分量 **/
 	public float z;
 
+	/** X 轴单位向量 (1, 0, 0) */
 	public final static Vector3 X = new Vector3(1, 0, 0);
+	/** Y 轴单位向量 (0, 1, 0) */
 	public final static Vector3 Y = new Vector3(0, 1, 0);
+	/** Z 轴单位向量 (0, 0, 1) */
 	public final static Vector3 Z = new Vector3(0, 0, 1);
+	/** 零向量 (0, 0, 0) */
 	public final static Vector3 Zero = new Vector3(0, 0, 0);
+	/** 所有分量为1的向量 (1, 1, 1) */
 	public final static Vector3 One = new Vector3(1, 1, 1);
 
 	private final static Matrix4 tmpMat = new Matrix4();
 
-	/** Constructs a vector at (0,0,0) */
+	/** 构造一个位于 (0,0,0) 的向量 */
 	public Vector3 () {
 	}
 
-	/** Creates a vector with the given components
-	 * @param x The x-component
-	 * @param y The y-component
-	 * @param z The z-component */
+	/** 使用指定分量构造向量
+	 * @param x x 分量
+	 * @param y y 分量
+	 * @param z z 分量 */
 	public Vector3 (float x, float y, float z) {
 		this.set(x, y, z);
 	}
 
-	/** Creates a vector from the given vector
-	 * @param vector The vector */
+	/** 从给定向量复制构造
+	 * @param vector 源向量 */
 	public Vector3 (final Vector3 vector) {
 		this.set(vector);
 	}
 
-	/** Creates a vector from the given array. The array must have at least 3 elements.
+	/** 从数组中构造向量，数组必须至少有3个元素。
 	 *
-	 * @param values The array */
+	 * @param values 数组 */
 	public Vector3 (final float[] values) {
 		this.set(values[0], values[1], values[2]);
 	}
 
-	/** Creates a vector from the given vector and z-component
+	/** 从给定的 Vector2 和 z 分量构造向量
 	 *
-	 * @param vector The vector
-	 * @param z The z-component */
+	 * @param vector Vector2
+	 * @param z z 分量 */
 	public Vector3 (final Vector2 vector, float z) {
 		this.set(vector.x, vector.y, z);
 	}
 
-	/** Sets the vector to the given components
+	/** 设置向量的分量
 	 *
-	 * @param x The x-component
-	 * @param y The y-component
-	 * @param z The z-component
-	 * @return this vector for chaining */
+	 * @param x x 分量
+	 * @param y y 分量
+	 * @param z z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 set (float x, float y, float z) {
 		this.x = x;
 		this.y = y;
@@ -92,27 +111,27 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.set(vector.x, vector.y, vector.z);
 	}
 
-	/** Sets the components from the array. The array must have at least 3 elements
+	/** 从数组设置分量，数组必须至少有3个元素
 	 *
-	 * @param values The array
-	 * @return this vector for chaining */
+	 * @param values 数组
+	 * @return 当前向量（链式调用） */
 	public Vector3 set (final float[] values) {
 		return this.set(values[0], values[1], values[2]);
 	}
 
-	/** Sets the components of the given vector and z-component
+	/** 从 Vector2 和 z 分量设置
 	 *
-	 * @param vector The vector
-	 * @param z The z-component
-	 * @return This vector for chaining */
+	 * @param vector Vector2
+	 * @param z z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 set (final Vector2 vector, float z) {
 		return this.set(vector.x, vector.y, z);
 	}
 
-	/** Sets the components from the given spherical coordinate
-	 * @param azimuthalAngle The angle between x-axis in radians [0, 2pi]
-	 * @param polarAngle The angle between z-axis in radians [0, pi]
-	 * @return This vector for chaining */
+	/** 从球面坐标设置向量分量
+	 * @param azimuthalAngle 方位角（x轴夹角，弧度），范围 [0, 2pi]
+	 * @param polarAngle 极角（z轴夹角，弧度），范围 [0, pi]
+	 * @return 当前向量（链式调用） */
 	public Vector3 setFromSpherical (float azimuthalAngle, float polarAngle) {
 		float cosPolar = MathUtils.cos(polarAngle);
 		float sinPolar = MathUtils.sin(polarAngle);
@@ -144,19 +163,19 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.add(vector.x, vector.y, vector.z);
 	}
 
-	/** Adds the given vector to this component
-	 * @param x The x-component of the other vector
-	 * @param y The y-component of the other vector
-	 * @param z The z-component of the other vector
-	 * @return This vector for chaining. */
+	/** 将给定的分量添加到此向量
+	 * @param x 另一个向量的 x 分量
+	 * @param y 另一个向量的 y 分量
+	 * @param z 另一个向量的 z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 add (float x, float y, float z) {
 		return this.set(this.x + x, this.y + y, this.z + z);
 	}
 
-	/** Adds the given value to all three components of the vector.
+	/** 将给定的标量值添加到所有三个分量
 	 *
-	 * @param values The value
-	 * @return This vector for chaining */
+	 * @param values 值
+	 * @return 当前向量（链式调用） */
 	public Vector3 add (float values) {
 		return this.set(this.x + values, this.y + values, this.z + values);
 	}
@@ -166,20 +185,20 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.sub(a_vec.x, a_vec.y, a_vec.z);
 	}
 
-	/** Subtracts the other vector from this vector.
+	/** 从此向量中减去另一个向量。
 	 *
-	 * @param x The x-component of the other vector
-	 * @param y The y-component of the other vector
-	 * @param z The z-component of the other vector
-	 * @return This vector for chaining */
+	 * @param x 另一个向量的 x 分量
+	 * @param y 另一个向量的 y 分量
+	 * @param z 另一个向量的 z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 sub (float x, float y, float z) {
 		return this.set(this.x - x, this.y - y, this.z - z);
 	}
 
-	/** Subtracts the given value from all components of this vector
+	/** 从所有分量中减去给定值
 	 *
-	 * @param value The value
-	 * @return This vector for chaining */
+	 * @param value 值
+	 * @return 当前向量（链式调用） */
 	public Vector3 sub (float value) {
 		return this.set(this.x - value, this.y - value, this.z - value);
 	}
@@ -194,11 +213,11 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.set(x * other.x, y * other.y, z * other.z);
 	}
 
-	/** Scales this vector by the given values
-	 * @param vx X value
-	 * @param vy Y value
-	 * @param vz Z value
-	 * @return This vector for chaining */
+	/** 分别缩放向量的每个分量
+	 * @param vx X 值
+	 * @param vy Y 值
+	 * @param vz Z 值
+	 * @return 当前向量（链式调用） */
 	public Vector3 scl (float vx, float vy, float vz) {
 		return this.set(this.x * vx, this.y * vy, this.z * vz);
 	}
@@ -219,7 +238,7 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this;
 	}
 
-	/** @return The Euclidean length */
+	/** @return 欧几里得长度 */
 	public static float len (final float x, final float y, final float z) {
 		return (float)Math.sqrt(x * x + y * y + z * z);
 	}
@@ -229,7 +248,7 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return (float)Math.sqrt(x * x + y * y + z * z);
 	}
 
-	/** @return The squared Euclidean length */
+	/** @return 欧几里得长度的平方 */
 	public static float len2 (final float x, final float y, final float z) {
 		return x * x + y * y + z * z;
 	}
@@ -239,14 +258,14 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return x * x + y * y + z * z;
 	}
 
-	/** Returns true if this vector and the vector parameter have identical components.
-	 * @param vector The other vector
-	 * @return Whether this and the other vector are equal with exact precision */
+	/** 如与此向量和参数向量的分量完全相同，返回 true。
+	 * @param vector 另一个向量
+	 * @return 是否精确相等 */
 	public boolean idt (final Vector3 vector) {
 		return x == vector.x && y == vector.y && z == vector.z;
 	}
 
-	/** @return The Euclidean distance between the two specified vectors */
+	/** @return 两个指定向量之间的欧几里得距离 */
 	public static float dst (final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
 		final float a = x2 - x1;
 		final float b = y2 - y1;
@@ -262,7 +281,7 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return (float)Math.sqrt(a * a + b * b + c * c);
 	}
 
-	/** @return the distance between this point and the given point */
+	/** @return 此点与给定点之间的距离 */
 	public float dst (float x, float y, float z) {
 		final float a = x - this.x;
 		final float b = y - this.y;
@@ -270,7 +289,7 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return (float)Math.sqrt(a * a + b * b + c * c);
 	}
 
-	/** @return the squared distance between the given points */
+	/** @return 给定点之间的平方距离 */
 	public static float dst2 (final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
 		final float a = x2 - x1;
 		final float b = y2 - y1;
@@ -286,11 +305,11 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return a * a + b * b + c * c;
 	}
 
-	/** Returns the squared distance between this point and the given point
-	 * @param x The x-component of the other point
-	 * @param y The y-component of the other point
-	 * @param z The z-component of the other point
-	 * @return The squared distance */
+	/** 返回此点与给定点之间的平方距离
+	 * @param x 另一个点的 x 分量
+	 * @param y 另一个点的 y 分量
+	 * @param z 另一个点的 z 分量
+	 * @return 平方距离 */
 	public float dst2 (float x, float y, float z) {
 		final float a = x - this.x;
 		final float b = y - this.y;
@@ -305,7 +324,7 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return this.scl(1f / (float)Math.sqrt(len2));
 	}
 
-	/** @return The dot product between the two vectors */
+	/** @return 两个向量的点积 */
 	public static float dot (float x1, float y1, float z1, float x2, float y2, float z2) {
 		return x1 * x2 + y1 * y2 + z1 * z2;
 	}
@@ -315,43 +334,42 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return x * vector.x + y * vector.y + z * vector.z;
 	}
 
-	/** Returns the dot product between this and the given vector.
-	 * @param x The x-component of the other vector
-	 * @param y The y-component of the other vector
-	 * @param z The z-component of the other vector
-	 * @return The dot product */
+	/** 返回此向量与给定向量的点积。
+	 * @param x 另一个向量的 x 分量
+	 * @param y 另一个向量的 y 分量
+	 * @param z 另一个向量的 z 分量
+	 * @return 点积 */
 	public float dot (float x, float y, float z) {
 		return this.x * x + this.y * y + this.z * z;
 	}
 
-	/** Sets this vector to the cross product between it and the other vector.
-	 * @param vector The other vector
-	 * @return This vector for chaining */
+	/** 将此向量设为此向量与另一个向量的叉积。
+	 * @param vector 另一个向量
+	 * @return 当前向量（链式调用） */
 	public Vector3 crs (final Vector3 vector) {
 		return this.set(y * vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x);
 	}
 
-	/** Sets this vector to the cross product between it and the other vector.
-	 * @param x The x-component of the other vector
-	 * @param y The y-component of the other vector
-	 * @param z The z-component of the other vector
-	 * @return This vector for chaining */
+	/** 将此向量设为此向量与给定向量的叉积。
+	 * @param x 另一个向量的 x 分量
+	 * @param y 另一个向量的 y 分量
+	 * @param z 另一个向量的 z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 crs (float x, float y, float z) {
 		return this.set(this.y * z - this.z * y, this.z * x - this.x * z, this.x * y - this.y * x);
 	}
 
-	/** Left-multiplies the vector by the given 4x3 column major matrix. The matrix should be composed by a 3x3 matrix representing
-	 * rotation and scale plus a 1x3 matrix representing the translation.
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	/** 左乘给定的 4x3 列主序矩阵。矩阵应由代表旋转和缩放的 3x3 矩阵以及代表平移的 1x3 矩阵组成。
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 mul4x3 (float[] matrix) {
 		return set(x * matrix[0] + y * matrix[3] + z * matrix[6] + matrix[9],
 			x * matrix[1] + y * matrix[4] + z * matrix[7] + matrix[10], x * matrix[2] + y * matrix[5] + z * matrix[8] + matrix[11]);
 	}
 
-	/** Left-multiplies the vector by the given matrix, assuming the fourth (w) component of the vector is 1.
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	/** 左乘给定的 4x4 矩阵，假设向量的第4个分量（w）为1。
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 mul (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02] + l_mat[Matrix4.M03],
@@ -359,9 +377,9 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix4.M20] + y * l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M23]);
 	}
 
-	/** Multiplies the vector by the transpose of the given matrix, assuming the fourth (w) component of the vector is 1.
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	/** 左乘给定矩阵的转置，假设向量的第4个分量（w）为1。
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 traMul (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20] + l_mat[Matrix4.M30],
@@ -369,9 +387,9 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M32]);
 	}
 
-	/** Left-multiplies the vector by the given matrix.
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	/** 左乘给定的 3x3 矩阵。
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 mul (Matrix3 matrix) {
 		final float[] l_mat = matrix.val;
 		return set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M01] + z * l_mat[Matrix3.M02],
@@ -379,9 +397,9 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix3.M20] + y * l_mat[Matrix3.M21] + z * l_mat[Matrix3.M22]);
 	}
 
-	/** Multiplies the vector by the transpose of the given matrix.
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	/** 左乘给定矩阵的转置。
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 traMul (Matrix3 matrix) {
 		final float[] l_mat = matrix.val;
 		return set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M10] + z * l_mat[Matrix3.M20],
@@ -389,17 +407,17 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix3.M02] + y * l_mat[Matrix3.M12] + z * l_mat[Matrix3.M22]);
 	}
 
-	/** Multiplies the vector by the given {@link Quaternion}.
-	 * @return This vector for chaining */
+	/** 左乘给定的 {@link Quaternion}（四元数）。
+	 * @return 当前向量（链式调用） */
 	public Vector3 mul (final Quaternion quat) {
 		return quat.transform(this);
 	}
 
-	/** Multiplies this vector by the given matrix dividing by w, assuming the fourth (w) component of the vector is 1. This is
-	 * mostly used to project/unproject vectors via a perspective projection matrix.
+	/** 左乘给定矩阵并除以 w，假设向量的第4个分量（w）为1。
+	 * 主要用于通过透视投影矩阵进行投影/反投影。
 	 *
-	 * @param matrix The matrix.
-	 * @return This vector for chaining */
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 prj (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		final float l_w = 1f / (x * l_mat[Matrix4.M30] + y * l_mat[Matrix4.M31] + z * l_mat[Matrix4.M32] + l_mat[Matrix4.M33]);
@@ -408,10 +426,10 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			(x * l_mat[Matrix4.M20] + y * l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M23]) * l_w);
 	}
 
-	/** Multiplies this vector by the first three columns of the matrix, essentially only applying rotation and scaling.
+	/** 仅应用矩阵的前三列（旋转和缩放），不包含平移。
 	 *
-	 * @param matrix The matrix
-	 * @return This vector for chaining */
+	 * @param matrix 矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 rot (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02],
@@ -419,10 +437,9 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix4.M20] + y * l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22]);
 	}
 
-	/** Multiplies this vector by the transpose of the first three columns of the matrix. Note: only works for translation and
-	 * rotation, does not work for scaling. For those, use {@link #rot(Matrix4)} with {@link Matrix4#inv()}.
-	 * @param matrix The transformation matrix
-	 * @return The vector for chaining */
+	/** 左乘矩阵前三列的转置（反向旋转）。仅适用于平移和旋转，不适用于缩放。
+	 * @param matrix 变换矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 unrotate (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20],
@@ -430,11 +447,9 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
 	}
 
-	/** Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
-	 * transpose of the first three columns of the matrix. Note: only works for translation and rotation, does not work for
-	 * scaling. For those, use {@link #mul(Matrix4)} with {@link Matrix4#inv()}.
-	 * @param matrix The transformation matrix
-	 * @return The vector for chaining */
+	/** 先减去矩阵的平移，再乘以矩阵前三列的转置（反向变换）。仅适用于平移和旋转。
+	 * @param matrix 变换矩阵
+	 * @return 当前向量（链式调用） */
 	public Vector3 untransform (final Matrix4 matrix) {
 		final float[] l_mat = matrix.val;
 		x -= l_mat[Matrix4.M03];
@@ -445,43 +460,43 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 			x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
 	}
 
-	/** Rotates this vector by the given angle in degrees around the given axis.
+	/** 绕指定轴旋转此向量（角度制）。
 	 *
-	 * @param degrees the angle in degrees
-	 * @param axisX the x-component of the axis
-	 * @param axisY the y-component of the axis
-	 * @param axisZ the z-component of the axis
-	 * @return This vector for chaining */
+	 * @param degrees 角度（度）
+	 * @param axisX 轴 x 分量
+	 * @param axisY 轴 y 分量
+	 * @param axisZ 轴 z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 rotate (float degrees, float axisX, float axisY, float axisZ) {
 		return this.mul(tmpMat.setToRotation(axisX, axisY, axisZ, degrees));
 	}
 
-	/** Rotates this vector by the given angle in radians around the given axis.
+	/** 绕指定轴旋转此向量（弧度制）。
 	 *
-	 * @param radians the angle in radians
-	 * @param axisX the x-component of the axis
-	 * @param axisY the y-component of the axis
-	 * @param axisZ the z-component of the axis
-	 * @return This vector for chaining */
+	 * @param radians 角度（弧度）
+	 * @param axisX 轴 x 分量
+	 * @param axisY 轴 y 分量
+	 * @param axisZ 轴 z 分量
+	 * @return 当前向量（链式调用） */
 	public Vector3 rotateRad (float radians, float axisX, float axisY, float axisZ) {
 		return this.mul(tmpMat.setToRotationRad(axisX, axisY, axisZ, radians));
 	}
 
-	/** Rotates this vector by the given angle in degrees around the given axis.
+	/** 绕指定轴旋转此向量（角度制）。
 	 *
-	 * @param axis the axis
-	 * @param degrees the angle in degrees
-	 * @return This vector for chaining */
+	 * @param axis 旋转轴
+	 * @param degrees 角度（度）
+	 * @return 当前向量（链式调用） */
 	public Vector3 rotate (final Vector3 axis, float degrees) {
 		tmpMat.setToRotation(axis, degrees);
 		return this.mul(tmpMat);
 	}
 
-	/** Rotates this vector by the given angle in radians around the given axis.
+	/** 绕指定轴旋转此向量（弧度制）。
 	 *
-	 * @param axis the axis
-	 * @param radians the angle in radians
-	 * @return This vector for chaining */
+	 * @param axis 旋转轴
+	 * @param radians 角度（弧度）
+	 * @return 当前向量（链式调用） */
 	public Vector3 rotateRad (final Vector3 axis, float radians) {
 		tmpMat.setToRotationRad(axis, radians);
 		return this.mul(tmpMat);
@@ -571,12 +586,12 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return lerp(target, interpolator.apply(0f, 1f, alpha));
 	}
 
-	/** Spherically interpolates between this vector and the target vector by alpha which is in the range [0,1]. The result is
-	 * stored in this vector.
+	/** 球面线性插值。在 alpha [0,1] 范围内，在此向量和目标向量之间进行插值。
+	 * 结果存储在此向量中。
 	 *
-	 * @param target The target vector
-	 * @param alpha The interpolation coefficient
-	 * @return This vector for chaining. */
+	 * @param target 目标向量
+	 * @param alpha 插值系数 [0,1]
+	 * @return 当前向量（链式调用） */
 	public Vector3 slerp (final Vector3 target, float alpha) {
 		final float dot = dot(target);
 		// If the inputs are too close for comfort, simply linearly interpolate.
@@ -597,16 +612,16 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return scl((float)Math.cos(theta)).add(tx * dl, ty * dl, tz * dl).nor();
 	}
 
-	/** Converts this {@code Vector3} to a string in the format {@code (x,y,z)}.
-	 * @return a string representation of this object. */
+	/** 将此 {@code Vector3} 转换为字符串，格式为 {@code (x,y,z)}。
+	 * @return 字符串表示 */
 	@Override
 	public String toString () {
 		return "(" + x + "," + y + "," + z + ")";
 	}
 
-	/** Sets this {@code Vector3} to the value represented by the specified string according to the format of {@link #toString()}.
-	 * @param v the string.
-	 * @return this vector for chaining */
+	/** 将字符串（格式为 {@link #toString()}）解析为此向量的值。
+	 * @param v 字符串
+	 * @return 当前向量（链式调用） */
 	public Vector3 fromString (String v) {
 		int s0 = v.indexOf(',', 1);
 		int s1 = v.indexOf(',', s0 + 1);
@@ -690,8 +705,8 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return true;
 	}
 
-	/** Compares this vector with the other vector, using the supplied epsilon for fuzzy equality testing.
-	 * @return whether the vectors are the same. */
+	/** 使用指定 epsilon 进行模糊相等性比较。
+	 * @return 是否相同 */
 	public boolean epsilonEquals (float x, float y, float z, float epsilon) {
 		if (Math.abs(x - this.x) > epsilon) return false;
 		if (Math.abs(y - this.y) > epsilon) return false;
@@ -699,20 +714,20 @@ public class Vector3 implements Serializable, Vector<Vector3> {
 		return true;
 	}
 
-	/** Compares this vector with the other vector using MathUtils.FLOAT_ROUNDING_ERROR for fuzzy equality testing
+	/** 使用 MathUtils.FLOAT_ROUNDING_ERROR 进行模糊相等性比较
 	 *
-	 * @param other other vector to compare
-	 * @return true if vector are equal, otherwise false */
+	 * @param other 另一个向量
+	 * @return 是否相等 */
 	public boolean epsilonEquals (final Vector3 other) {
 		return epsilonEquals(other, MathUtils.FLOAT_ROUNDING_ERROR);
 	}
 
-	/** Compares this vector with the other vector using MathUtils.FLOAT_ROUNDING_ERROR for fuzzy equality testing
+	/** 使用 MathUtils.FLOAT_ROUNDING_ERROR 进行模糊相等性比较
 	 *
-	 * @param x x component of the other vector to compare
-	 * @param y y component of the other vector to compare
-	 * @param z z component of the other vector to compare
-	 * @return true if vector are equal, otherwise false */
+	 * @param x 另一个向量的 x 分量
+	 * @param y 另一个向量的 y 分量
+	 * @param z 另一个向量的 z 分量
+	 * @return 是否相等 */
 	public boolean epsilonEquals (float x, float y, float z) {
 		return epsilonEquals(x, y, z, MathUtils.FLOAT_ROUNDING_ERROR);
 	}

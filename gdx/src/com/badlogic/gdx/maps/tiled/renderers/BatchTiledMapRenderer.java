@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>基于 Batch 的 Tiled 地图渲染器基类。</b>
+ * 
  * Copyright 2013 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

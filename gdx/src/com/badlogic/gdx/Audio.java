@@ -25,81 +25,93 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Null;
 
-/** This interface encapsulates the creation and management of audio resources. It allows you to get direct access to the audio
- * hardware via the {@link AudioDevice} and {@link AudioRecorder} interfaces, create sound effects via the {@link Sound} interface
- * and play music streams via the {@link Music} interface.
+/**
+ * <b>音频模块接口。</b>
+ * 封装了音频资源的创建和管理。通过此接口可以：
+ * <ul>
+ *   <li>通过 {@link AudioDevice} 直接访问音频硬件</li>
+ *   <li>通过 {@link AudioRecorder} 录制音频</li>
+ *   <li>通过 {@link Sound} 创建和播放音效（如枪声、爆炸声等短音频）</li>
+ *   <li>通过 {@link Music} 播放音乐流（长音频文件）</li>
+ * </ul>
  * 
  * <p>
- * All resources created via this interface have to be disposed as soon as they are no longer used.
+ * 通过此接口创建的所有资源在不再使用时都必须调用 dispose() 释放。
  * </p>
  * 
  * <p>
- * Note that all {@link Music} instances will be automatically paused when the {@link ApplicationListener#pause()} method is
- * called, and automatically resumed when the {@link ApplicationListener#resume()} method is called.
+ * <b>注意：</b>所有 {@link Music} 实例在 {@link ApplicationListener#pause()} 时会自动暂停，
+ * 在 {@link ApplicationListener#resume()} 时会自动恢复。
  * </p>
  * 
  * @author mzechner */
 public interface Audio extends Disposable {
-	/** Creates a new {@link AudioDevice} either in mono or stereo mode. The AudioDevice has to be disposed via its
-	 * {@link AudioDevice#dispose()} method when it is no longer used.
+	/** 创建新的 {@link AudioDevice}（单声道或立体声）。
+	 * AudioDevice 不再使用时必须通过 {@link AudioDevice#dispose()} 释放。
 	 * 
-	 * @param samplingRate the sampling rate.
-	 * @param isMono whether the AudioDevice should be in mono or stereo mode
-	 * @return the AudioDevice
+	 * @param samplingRate 采样率（Hz）
+	 * @param isMono 是否单声道（false 为立体声）
+	 * @return AudioDevice 实例
 	 * 
-	 * @throws GdxRuntimeException in case the device could not be created */
+	 * @throws GdxRuntimeException 如果设备无法创建 */
 	public AudioDevice newAudioDevice (int samplingRate, boolean isMono);
 
-	/** Creates a new {@link AudioRecorder}. The AudioRecorder has to be disposed after it is no longer used.
+	/** 创建新的 {@link AudioRecorder}（音频录制器）。
+	 * AudioRecorder 不再使用时必须释放。
 	 * 
-	 * @param samplingRate the sampling rate in Hertz
-	 * @param isMono whether the recorder records in mono or stereo
-	 * @return the AudioRecorder
+	 * @param samplingRate 采样率（Hz）
+	 * @param isMono 是否单声道录制
+	 * @return AudioRecorder 实例
 	 * 
-	 * @throws GdxRuntimeException in case the recorder could not be created */
+	 * @throws GdxRuntimeException 如果录制器无法创建 */
 	public AudioRecorder newAudioRecorder (int samplingRate, boolean isMono);
 
 	/**
 	 * <p>
-	 * Creates a new {@link Sound} which is used to play back audio effects such as gun shots or explosions. The Sound's audio data
-	 * is retrieved from the file specified via the {@link FileHandle}. Note that the complete audio data is loaded into RAM. You
-	 * should therefore not load big audio files with this methods. The current upper limit for decoded audio is 1 MB.
+	 * 创建新的 {@link Sound}（音效），用于播放如枪声、爆炸等短音频效果。
+	 * 音频数据从 {@link FileHandle} 指定的文件中加载。
 	 * </p>
 	 * 
 	 * <p>
-	 * Currently supported formats are WAV, MP3 and OGG.
+	 * <b>注意：</b>完整的音频数据会被加载到 RAM 中，因此不要用此方法加载大文件。
+	 * 解码后的音频上限为 1 MB。
 	 * </p>
 	 * 
 	 * <p>
-	 * The Sound has to be disposed if it is no longer used via the {@link Sound#dispose()} method.
+	 * 目前支持的格式：WAV、MP3 和 OGG。
 	 * </p>
 	 * 
-	 * @return the new Sound
-	 * @throws GdxRuntimeException in case the sound could not be loaded */
+	 * <p>
+	 * Sound 不再使用时必须通过 {@link Sound#dispose()} 释放。
+	 * </p>
+	 * 
+	 * @return 新的 Sound 实例
+	 * @throws GdxRuntimeException 如果音效无法加载 */
 	public Sound newSound (FileHandle fileHandle);
 
-	/** Creates a new {@link Music} instance which is used to play back a music stream from a file. Currently supported formats are
-	 * WAV, MP3 and OGG. The Music instance has to be disposed if it is no longer used via the {@link Music#dispose()} method.
-	 * Music instances are automatically paused when {@link ApplicationListener#pause()} is called and resumed when
-	 * {@link ApplicationListener#resume()} is called.
+	/** 创建新的 {@link Music}（音乐流）实例，用于播放音乐文件。
+	 * 目前支持的格式：WAV、MP3 和 OGG。
+	 * Music 不再使用时必须通过 {@link Music#dispose()} 释放。
+	 * Music 实例在 {@link ApplicationListener#pause()} 时自动暂停，
+	 * 在 {@link ApplicationListener#resume()} 时自动恢复。
 	 * 
-	 * @param file the FileHandle
-	 * @return the new Music or null if the Music could not be loaded
-	 * @throws GdxRuntimeException in case the music could not be loaded */
+	 * @param file 文件句柄
+	 * @return 新的 Music 实例，如果无法加载则返回 null
+	 * @throws GdxRuntimeException 如果音乐无法加载 */
 	public Music newMusic (FileHandle file);
 
-	/** Sets a new OutputDevice. The identifier can be retrieved from {@link Audio#getAvailableOutputDevices()}. If null is passed,
-	 * it will switch to auto.
+	/** 切换音频输出设备。设备标识符可通过 {@link Audio#getAvailableOutputDevices()} 获取。
+	 * 传入 null 将切换到自动模式。
 	 *
-	 * @param deviceIdentifier device identifier to switch to, or null for auto */
+	 * @param deviceIdentifier 设备标识符，或 null 表示自动
+	 * @return 是否切换成功 */
 	public boolean switchOutputDevice (@Null String deviceIdentifier);
 
-	/** This function returns a list of fully qualified Output device names. This function is only implemented on desktop and web.
-	 * Note that on gwt the GwtApplicationConfiguration#fetchAvailableOutputDevices attribute needs to be set to true for asking
-	 * the user for permission! On all other platforms it will return an empty array. It will also return an empty array on error.
-	 * The names returned need os dependent preprocessing before exposing to a user.
+	/** 返回可用的音频输出设备列表。此功能仅在桌面和 Web 上实现。
+	 * 注意，在 GWT 上需要将 GwtApplicationConfiguration#fetchAvailableOutputDevices 设置为 true，
+	 * 以请求用户权限。在其他平台上返回空数组。出错时也返回空数组。
 	 *
-	 * @return A array of available output devices */
+	 * @return 可用输出设备名称的数组 */
 	public String[] getAvailableOutputDevices ();
 
 }

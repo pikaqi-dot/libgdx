@@ -20,7 +20,9 @@ import java.io.Serializable;
 
 import com.badlogic.gdx.utils.NumberUtils;
 
-/** A simple quaternion class.
+/** <b>四元数类。</b>
+ * 四元数用于表示3D旋转，避免万向锁问题。
+ * 形式为 q = w + xi + yj + zk，其中 (x,y,z) 为旋转轴，w 为旋转角度分量。
  * @see <a href="http://en.wikipedia.org/wiki/Quaternion">http://en.wikipedia.org/wiki/Quaternion</a>
  * @author badlogicgames@gmail.com
  * @author vesuvio

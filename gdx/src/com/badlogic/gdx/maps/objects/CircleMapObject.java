@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>圆形地图对象，由圆心和半径定义的圆形区域。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

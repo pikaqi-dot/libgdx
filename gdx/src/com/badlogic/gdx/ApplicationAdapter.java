@@ -16,7 +16,9 @@
 
 package com.badlogic.gdx;
 
-/** Convenience implementation of {@link ApplicationListener}. Derive from this and only override what you need.
+/** <b>应用监听器适配器。</b>
+ * {@link ApplicationListener} 的便捷实现。从此类派生并仅重写你需要的方法。
+ * 所有方法默认均为空实现，无需实现不需要的生命周期方法。
  * @author mzechner */
 public abstract class ApplicationAdapter implements ApplicationListener {
 	@Override

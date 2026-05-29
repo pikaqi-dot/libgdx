@@ -2,6 +2,9 @@
 package com.badlogic.gdx.utils;
 
 /** The text justification hint on the type of spacing and which lines to justify. */
+ * <b>文本对齐工具</b>
+ * 
+/** The text justification hint on the type of spacing and which lines to justify. */
 public enum Justify {
 	/** No justification is applied. */
 	None,

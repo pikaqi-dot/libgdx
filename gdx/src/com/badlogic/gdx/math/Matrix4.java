@@ -18,8 +18,16 @@ package com.badlogic.gdx.math;
 
 import java.io.Serializable;
 
-/** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4 matrix. Like
- * the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:
+/** <b>4x4 矩阵类（列主序）。</b>
+ * 封装了一个列主序的 4x4 变换矩阵。与 {@link Vector3} 一样，支持方法链式调用。
+ * 
+ * <p>矩阵布局（列主序，共16个元素）：<br>
+ * M00(0)  M01(4)  M02(8)   M03(12)<br>
+ * M10(1)  M11(5)  M12(9)   M13(13)<br>
+ * M20(2)  M21(6)  M22(10)  M23(14)<br>
+ * M30(3)  M31(7)  M32(11)  M33(15)</p>
+ * 
+ * <p>典型用途：平移、旋转、缩放、投影变换。</p>
  * 
  * <pre>
  * Matrix4 mat = new Matrix4().trn(position).mul(camera.combined);

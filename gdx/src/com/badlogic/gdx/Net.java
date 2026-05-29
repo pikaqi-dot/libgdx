@@ -34,129 +34,112 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-/** Provides methods to perform networking operations, such as simple HTTP get and post requests, and TCP server/client socket
- * communication.
+/** <b>网络操作接口。</b>
+ * 提供执行网络操作的方法，包括简单的 HTTP GET/POST 请求、TCP 服务器/客户端 Socket 通信。
  * </p>
  * 
- * To perform an HTTP request create a {@link HttpRequest} with the HTTP method (see {@link HttpMethods} for common methods) and
- * invoke {@link #sendHttpRequest(HttpRequest, HttpResponseListener)} with it and a {@link HttpResponseListener}. After the HTTP
- * request was processed, the {@link HttpResponseListener} is called with a {@link HttpResponse} with the HTTP response values and
- * an status code to determine if the request was successful or not.
+ * <b>HTTP 请求用法：</b><br>
+ * 创建包含 HTTP 方法（参见 {@link HttpMethods}）的 {@link HttpRequest}，
+ * 然后调用 {@link #sendHttpRequest(HttpRequest, HttpResponseListener)} 并传入 {@link HttpResponseListener}。
+ * HTTP 请求处理完成后，会调用 HttpResponseListener 返回 {@link HttpResponse} 和状态码，以判断请求是否成功。
  * </p>
  * 
- * To create a TCP client socket to communicate with a remote TCP server, invoke the
- * {@link #newClientSocket(Protocol, String, int, SocketHints)} method. The returned {@link Socket} offers an {@link InputStream}
- * and {@link OutputStream} to communicate with the end point.
+ * <b>TCP 客户端用法：</b><br>
+ * 调用 {@link #newClientSocket(Protocol, String, int, SocketHints)} 创建 TCP 客户端 Socket 与远程服务器通信。
+ * 返回的 {@link Socket} 提供 {@link InputStream} 和 {@link OutputStream} 用于通信。
  * </p>
  * 
- * To create a TCP server socket that waits for incoming connections, invoke the
- * {@link #newServerSocket(Protocol, int, ServerSocketHints)} method. The returned {@link ServerSocket} offers an
- * {@link ServerSocket#accept(SocketHints options)} method that waits for an incoming connection.
+ * <b>TCP 服务器用法：</b><br>
+ * 调用 {@link #newServerSocket(Protocol, int, ServerSocketHints)} 创建 TCP 服务器 Socket 等待连接。
+ * 返回的 {@link ServerSocket} 通过 {@link ServerSocket#accept(SocketHints)} 等待入站连接。
  * 
  * @author mzechner
  * @author noblemaster
  * @author arielsan */
 public interface Net {
 
-	/** HTTP response interface with methods to get the response data as a byte[], a {@link String} or an {@link InputStream}. */
+	/** HTTP 响应接口，提供获取响应数据的方法（byte[]、String 或 InputStream）。 */
 	public static interface HttpResponse {
-		/** Returns the data of the HTTP response as a byte[].
+		/** 返回 HTTP 响应的数据（byte[]）。
 		 * <p>
-		 * <b>Note</b>: This method may only be called once per response.
+		 * <b>注意</b>：每个响应仅能调用此方法一次。
 		 * </p>
-		 * @return the result as a byte[] or null in case of a timeout or if the operation was canceled/terminated abnormally. The
-		 *         timeout is specified when creating the HTTP request, with {@link HttpRequest#setTimeOut(int)} */
+		 * @return byte[] 格式的结果，超时或异常取消时返回 null */
 		byte[] getResult ();
 
-		/** Returns the data of the HTTP response as a {@link String}.
+		/** 返回 HTTP 响应的数据（{@link String}）。
 		 * <p>
-		 * <b>Note</b>: This method may only be called once per response.
+		 * <b>注意</b>：每个响应仅能调用此方法一次。
 		 * </p>
-		 * @return the result as a string or null in case of a timeout or if the operation was canceled/terminated abnormally. The
-		 *         timeout is specified when creating the HTTP request, with {@link HttpRequest#setTimeOut(int)} */
+		 * @return String 格式的结果，超时或异常取消时返回 null */
 		String getResultAsString ();
 
-		/** Returns the data of the HTTP response as an {@link InputStream}. <b><br>
-		 * Warning:</b> Do not store a reference to this InputStream outside of
-		 * {@link HttpResponseListener#handleHttpResponse(HttpResponse)}. The underlying HTTP connection will be closed after that
-		 * callback finishes executing. Reading from the InputStream after it's connection has been closed will lead to exception.
-		 * @return An {@link InputStream} with the {@link HttpResponse} data. */
+		/** 返回 HTTP 响应的数据（{@link InputStream}）。
+		 * <br><b>警告：</b>不要在 {@link HttpResponseListener#handleHttpResponse(HttpResponse)} 之外持有此 InputStream 引用。
+		 * 底层 HTTP 连接会在回调执行完毕后关闭。在连接关闭后读取 InputStream 将导致异常。
+		 * @return 包含 HTTP 响应数据的 InputStream */
 		InputStream getResultAsStream ();
 
-		/** Returns the {@link HttpStatus} containing the statusCode of the HTTP response. */
+		/** 返回包含 HTTP 响应状态码的 {@link HttpStatus}。 */
 		HttpStatus getStatus ();
 
-		/** Returns the value of the header with the given name as a {@link String}, or null if the header is not set. See
-		 * {@link HttpResponseHeader}. */
+		/** 返回指定名称的响应头值（{@link String}），如果未设置则返回 null。参见 {@link HttpResponseHeader}。 */
 		String getHeader (String name);
 
-		/** Returns a Map of the headers. The keys are Strings that represent the header name. Each values is a List of Strings that
-		 * represent the corresponding header values. See {@link HttpResponseHeader}. */
+		/** 返回响应头的 Map。键为头名称（String），值为对应的头值列表（List<String>）。参见 {@link HttpResponseHeader}。 */
 		Map<String, List<String>> getHeaders ();
 	}
 
-	/** Provides common HTTP methods to use when creating a {@link HttpRequest}.
+	/** 提供创建 {@link HttpRequest} 时使用的常见 HTTP 方法。
 	 * <ul>
-	 * <li><b>HEAD</b> Asks for a response identical to that of a GET request but without the response body.</li>
-	 * <li><b>GET</b> requests a representation of the specified resource. Requests using GET should only retrieve data.</li>
-	 * <li><b>POST</b> is used to submit an entity to the specified resource, often causing a change in state or side effects on
-	 * the server.</li>
-	 * <li><b>PUT</b> replaces all current representations of the target resource with the request payload.</li>
-	 * <li><b>PATCH</b> method is used to apply partial modifications to a resource.</li>
-	 * <li><b>DELETE</b> deletes the specified resource.</li>
+	 * <li><b>HEAD</b> 请求与 GET 相同的响应，但不包含响应体。</li>
+	 * <li><b>GET</b> 请求指定资源的表示。使用 GET 的请求应只检索数据。</li>
+	 * <li><b>POST</b> 用于向指定资源提交实体，通常会导致服务器状态变化或副作用。</li>
+	 * <li><b>PUT</b> 用请求负载替换目标资源的所有当前表示。</li>
+	 * <li><b>PATCH</b> 用于对资源进行部分修改。</li>
+	 * <li><b>DELETE</b> 删除指定资源。</li>
 	 * </ul>
 	 */
 	public static interface HttpMethods {
-		/** The HEAD method asks for a response identical to that of a GET request, but without the response body. **/
+		/** HEAD 方法请求与 GET 相同的响应，但不带响应体。 **/
 		public static final String HEAD = "HEAD";
 
-		/** The GET method requests a representation of the specified resource. Requests using GET should only retrieve data. **/
+		/** GET 方法请求指定资源的表示。使用 GET 的请求应只检索数据。 **/
 		public static final String GET = "GET";
 
-		/** The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects
-		 * on the server. **/
+		/** POST 方法用于向指定资源提交实体，通常会导致服务器状态变化或副作用。 **/
 		public static final String POST = "POST";
 
-		/** The PUT method replaces all current representations of the target resource with the request payload. **/
+		/** PUT 方法用请求负载替换目标资源的所有当前表示。 **/
 		public static final String PUT = "PUT";
 
-		/** The PATCH method is used to apply partial modifications to a resource. **/
+		/** PATCH 方法用于对资源进行部分修改。 **/
 		public static final String PATCH = "PATCH";
 
-		/** The DELETE method deletes the specified resource. **/
+		/** DELETE 方法删除指定资源。 **/
 		public static final String DELETE = "DELETE";
 	}
 
-	/** Contains getters and setters for the following parameters:
+	/** HTTP 请求类，封装了以下参数：
 	 * <ul>
-	 * <li><strong>httpMethod:</strong> GET or POST are most common, can use {@link Net.HttpMethods HttpMethods} for static
-	 * references</li>
-	 * <li><strong>url:</strong> the url</li>
-	 * <li><strong>headers:</strong> a map of the headers, setter can be called multiple times</li>
-	 * <li><strong>timeout:</strong> time spent trying to connect before giving up</li>
-	 * <li><strong>content:</strong> A string containing the data to be used when processing the HTTP request.</li>
+	 * <li><strong>httpMethod:</strong> HTTP 方法（GET 或 POST 最常见），可使用 {@link Net.HttpMethods HttpMethods} 常量</li>
+	 * <li><strong>url:</strong> 请求 URL</li>
+	 * <li><strong>headers:</strong> 请求头 Map</li>
+	 * <li><strong>timeout:</strong> 连接超时时间</li>
+	 * <li><strong>content:</strong> 请求内容的字符串数据</li>
 	 * </ul>
 	 * 
-	 * Abstracts the concept of a HTTP Request:
-	 * 
 	 * <pre>
-	 * Map<String, String> parameters = new HashMap<String, String>();
-	 * parameters.put("user", "myuser");
-	 * 
-	 * HttpRequest httpGet = new HttpRequest(HttpMethods.Get);
+	 * HttpRequest httpGet = new HttpRequest(HttpMethods.GET);
 	 * httpGet.setUrl("http://somewhere.net");
 	 * httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));
-	 * ...
-	 * Gdx.net.sendHttpRequest (httpGet, new HttpResponseListener() {
-	 * 	public void handleHttpResponse(HttpResponse httpResponse) {
-	 * 		status = httpResponse.getResultAsString();
-	 * 		//do stuff here based on response
-	 * 	}
-	 * 
-	 * 	public void failed(Throwable t) {
-	 * 		status = "failed";
-	 * 		//do stuff here based on the failed attempt
-	 * 	}
+	 * Gdx.net.sendHttpRequest(httpGet, new HttpResponseListener() {
+	 *     public void handleHttpResponse(HttpResponse httpResponse) {
+	 *         String result = httpResponse.getResultAsString();
+	 *     }
+	 *     public void failed(Throwable t) {
+	 *         // 处理失败
+	 *     }
 	 * });
 	 * </pre>
 	 */
@@ -179,52 +162,50 @@ public interface Net {
 			this.headers = new HashMap<String, String>();
 		}
 
-		/** Creates a new HTTP request with the specified HTTP method, see {@link HttpMethods}.
-		 * @param httpMethod This is the HTTP method for the request, see {@link HttpMethods} */
+		/** 使用指定的 HTTP 方法创建新的 HTTP 请求。
+		 * @param httpMethod HTTP 方法，参见 {@link HttpMethods} */
 		public HttpRequest (String httpMethod) {
 			this();
 			this.httpMethod = httpMethod;
 		}
 
-		/** Sets the URL of the HTTP request.
-		 * @param url The URL to set. */
+		/** 设置 HTTP 请求的 URL。
+		 * @param url URL */
 		public void setUrl (String url) {
 			this.url = url;
 		}
 
-		/** Sets a header to this HTTP request, see {@link HttpRequestHeader}.
-		 * @param name the name of the header.
-		 * @param value the value of the header. */
+		/** 设置 HTTP 请求头，参见 {@link HttpRequestHeader}。
+		 * @param name 头名称
+		 * @param value 头值 */
 		public void setHeader (String name, String value) {
 			headers.put(name, value);
 		}
 
-		/** Sets the content to be used in the HTTP request.
-		 * @param content A string encoded in the corresponding Content-Encoding set in the headers, with the data to send with the
-		 *           HTTP request. For example, in case of HTTP GET, the content is used as the query string of the GET while on a
-		 *           HTTP POST it is used to send the POST data. */
+		/** 设置 HTTP 请求的内容（body）。
+		 * @param content 编码后的字符串内容，HTTP GET 时用作查询字符串，HTTP POST 时用作 POST 数据 */
 		public void setContent (String content) {
 			this.content = content;
 		}
 
-		/** Sets the content as a stream to be used for a POST for example, to transmit custom data.
-		 * @param contentStream The stream with the content data. */
+		/** 设置内容为输入流，用于传输自定义数据（如 POST 上传）。
+		 * @param contentStream 内容数据流 */
 		public void setContent (InputStream contentStream, long contentLength) {
 			this.contentStream = contentStream;
 			this.contentLength = contentLength;
 		}
 
-		/** Sets the time to wait for the HTTP request to be processed, use 0 block until it is done. The timeout is used for both
-		 * the timeout when establishing TCP connection, and the timeout until the first byte of data is received.
-		 * @param timeOut the number of milliseconds to wait before giving up, 0 or negative to block until the operation is done */
+		/** 设置 HTTP 请求的超时时间，0 表示阻塞直到完成。
+		 * 超时同时用于 TCP 连接建立和接收第一个字节数据。
+		 * @param timeOut 超时毫秒数，0 或负数表示一直等待 */
 		public void setTimeOut (int timeOut) {
 			this.timeOut = timeOut;
 		}
 
-		/** Sets whether 301 and 302 redirects are followed. By default true. Can't be changed in the GWT backend because this uses
-		 * XmlHttpRequests which always redirect.
-		 * @param followRedirects whether to follow redirects.
-		 * @exception IllegalArgumentException if redirection is disabled on the GWT backend. */
+		/** 设置是否跟随 301 和 302 重定向。默认为 true。
+		 * GWT 后端无法更改，因为 XmlHttpRequest 总是重定向。
+		 * @param followRedirects 是否跟随重定向
+		 * @exception IllegalArgumentException 如果在 GWT 后端禁用了重定向 */
 		public void setFollowRedirects (boolean followRedirects) throws IllegalArgumentException {
 			if (followRedirects || Gdx.app.getType() != ApplicationType.WebGL) {
 				this.followRedirects = followRedirects;
@@ -233,59 +214,57 @@ public interface Net {
 			}
 		}
 
-		/** Sets whether a cross-origin request will include credentials. Only used on GWT backend to allow cross-origin requests to
-		 * include credentials such as cookies, authorization headers, etc... */
+		/** 设置跨域请求是否包含凭据（cookie、认证头等）。仅在 GWT 后端使用。 */
 		public void setIncludeCredentials (boolean includeCredentials) {
 			this.includeCredentials = includeCredentials;
 		}
 
-		/** Sets the HTTP method of the HttpRequest. */
+		/** 设置 HTTP 请求的方法。 */
 		public void setMethod (String httpMethod) {
 			this.httpMethod = httpMethod;
 		}
 
-		/** Returns the timeOut of the HTTP request.
-		 * @return the timeOut. */
+		/** @return HTTP 请求的超时时间 */
 		public int getTimeOut () {
 			return timeOut;
 		}
 
-		/** Returns the HTTP method of the HttpRequest. */
+		/** @return HTTP 请求的方法 */
 		public String getMethod () {
 			return httpMethod;
 		}
 
-		/** Returns the URL of the HTTP request. */
+		/** @return HTTP 请求的 URL */
 		public String getUrl () {
 			return url;
 		}
 
-		/** Returns the content string to be used for the HTTP request. */
+		/** @return HTTP 请求的内容字符串 */
 		public String getContent () {
 			return content;
 		}
 
-		/** Returns the content stream. */
+		/** @return 内容输入流 */
 		public InputStream getContentStream () {
 			return contentStream;
 		}
 
-		/** Returns the content length in case content is a stream. */
+		/** @return 内容长度（当内容为流时） */
 		public long getContentLength () {
 			return contentLength;
 		}
 
-		/** Returns a Map<String, String> with the headers of the HTTP request. */
+		/** @return HTTP 请求头的 Map */
 		public Map<String, String> getHeaders () {
 			return headers;
 		}
 
-		/** Returns whether 301 and 302 redirects are followed. By default true. Whether to follow redirects. */
+		/** @return 是否跟随 301/302 重定向 */
 		public boolean getFollowRedirects () {
 			return followRedirects;
 		}
 
-		/** Returns whether a cross-origin request will include credentials. By default false. */
+		/** @return 跨域请求是否包含凭据 */
 		public boolean getIncludeCredentials () {
 			return includeCredentials;
 		}
@@ -306,93 +285,68 @@ public interface Net {
 
 	}
 
-	/** Listener to be able to do custom logic once the {@link HttpResponse} is ready to be processed, register it with
-	 * {@link Net#sendHttpRequest(HttpRequest, HttpResponseListener)}. */
+	/** HTTP 响应监听器，注册后用于在 {@link HttpResponse} 准备好时执行自定义逻辑。
+	 * 通过 {@link Net#sendHttpRequest(HttpRequest, HttpResponseListener)} 注册。 */
 	public static interface HttpResponseListener {
 
-		/** Called when the {@link HttpRequest} has been processed and there is a {@link HttpResponse} ready. Passing data to the
-		 * rendering thread should be done using {@link Application#postRunnable(java.lang.Runnable runnable)} {@link HttpResponse}
-		 * contains the {@link HttpStatus} and should be used to determine if the request was successful or not (see more info at
-		 * {@link HttpStatus#getStatusCode()}). For example:
+		/** 当 {@link HttpRequest} 已处理完毕且 {@link HttpResponse} 已就绪时调用。
+		 * 向渲染线程传递数据应使用 {@link Application#postRunnable(Runnable)}。
 		 * 
-		 * <pre>
-		 *  HttpResponseListener listener = new HttpResponseListener() {
-		 *  	public void handleHttpResponse (HttpResponse httpResponse) {
-		 *  		HttpStatus status = httpResponse.getStatus();
-		 *  		if (status.getStatusCode() >= 200 && status.getStatusCode() < 300) {
-		 *  			// it was successful
-		 *  		} else {
-		 *  			// do something else
-		 *  		}
-		 *  	}
-		 *  }
-		 * </pre>
-		 * 
-		 * @param httpResponse The {@link HttpResponse} with the HTTP response values. */
+		 * @param httpResponse 包含 HTTP 响应值的 {@link HttpResponse} */
 		void handleHttpResponse (HttpResponse httpResponse);
 
-		/** Called if the {@link HttpRequest} failed because an exception when processing the HTTP request, could be a timeout any
-		 * other reason (not an HTTP error).
-		 * @param t If the HTTP request failed because an Exception, t encapsulates it to give more information. */
+		/** 当 {@link HttpRequest} 因异常而失败时调用（可能是超时或其他原因，非 HTTP 错误）。
+		 * @param t 封装失败异常的 Throwable */
 		void failed (Throwable t);
 
 		void cancelled ();
 	}
 
-	/** Process the specified {@link HttpRequest} and reports the {@link HttpResponse} to the specified
-	 * {@link HttpResponseListener}.
-	 * @param httpRequest The {@link HttpRequest} to be performed.
-	 * @param httpResponseListener The {@link HttpResponseListener} to call once the HTTP response is ready to be processed. Could
-	 *           be null, in that case no listener is called. */
+	/** 发送指定的 {@link HttpRequest} 并将 {@link HttpResponse} 报告给指定的 {@link HttpResponseListener}。
+	 * @param httpRequest 要发送的 HTTP 请求
+	 * @param httpResponseListener HTTP 响应监听器，可为 null */
 	public void sendHttpRequest (HttpRequest httpRequest, @Null HttpResponseListener httpResponseListener);
 
 	public void cancelHttpRequest (HttpRequest httpRequest);
 
 	public boolean isHttpRequestPending (HttpRequest httpRequest);
 
-	/** Protocol used by {@link Net#newServerSocket(Protocol, int, ServerSocketHints)} and
-	 * {@link Net#newClientSocket(Protocol, String, int, SocketHints)}.
+	/** 协议枚举，用于 {@link Net#newServerSocket(Protocol, int, ServerSocketHints)} 和
+	 * {@link Net#newClientSocket(Protocol, String, int, SocketHints)}。
 	 * @author mzechner */
 	public enum Protocol {
 		TCP
 	}
 
-	/** Creates a new server socket on the given address and port, using the given {@link Protocol}, waiting for incoming
-	 * connections.
+	/** 在指定地址和端口上创建新的服务器 Socket，等待入站连接。
 	 * 
-	 * @param hostname the hostname or ip address to bind the socket to
-	 * @param port the port to listen on
-	 * @param hints additional {@link ServerSocketHints} used to create the socket. Input null to use the default setting provided
-	 *           by the system.
-	 * @return the {@link ServerSocket}
-	 * @throws GdxRuntimeException in case the socket couldn't be opened */
+	 * @param hostname 绑定的主机名或 IP 地址
+	 * @param port 监听的端口
+	 * @param hints 额外的 {@link ServerSocketHints}，可为 null 使用系统默认设置
+	 * @return {@link ServerSocket}
+	 * @throws GdxRuntimeException 如果无法打开 Socket */
 	public ServerSocket newServerSocket (Protocol protocol, String hostname, int port, ServerSocketHints hints);
 
-	/** Creates a new server socket on the given port, using the given {@link Protocol}, waiting for incoming connections.
+	/** 在指定端口上创建新的服务器 Socket，等待入站连接。
 	 * 
-	 * @param port the port to listen on
-	 * @param hints additional {@link ServerSocketHints} used to create the socket. Input null to use the default setting provided
-	 *           by the system.
-	 * @return the {@link ServerSocket}
-	 * @throws GdxRuntimeException in case the socket couldn't be opened */
+	 * @param port 监听的端口
+	 * @param hints 额外的 {@link ServerSocketHints}，可为 null 使用系统默认设置
+	 * @return {@link ServerSocket}
+	 * @throws GdxRuntimeException 如果无法打开 Socket */
 	public ServerSocket newServerSocket (Protocol protocol, int port, ServerSocketHints hints);
 
-	/** Creates a new TCP client socket that connects to the given host and port.
+	/** 创建新的 TCP 客户端 Socket，连接到指定的主机和端口。
 	 * 
-	 * @param host the host address
-	 * @param port the port
-	 * @param hints additional {@link SocketHints} used to create the socket. Input null to use the default setting provided by the
-	 *           system.
-	 * @throws GdxRuntimeException in case the socket couldn't be opened */
+	 * @param host 主机地址
+	 * @param port 端口
+	 * @param hints 额外的 {@link SocketHints}，可为 null 使用系统默认设置
+	 * @throws GdxRuntimeException 如果无法打开 Socket */
 	public Socket newClientSocket (Protocol protocol, String host, int port, SocketHints hints);
 
-	/** Launches the default browser to display a URI. If the default browser is not able to handle the specified URI, the
-	 * application registered for handling URIs of the specified type is invoked. The application is determined from the protocol
-	 * and path of the URI. A best effort is made to open the given URI; however, since external applications are involved, no
-	 * guarantee can be made as to whether the URI was actually opened. If it is known that the URI was not opened, false will be
-	 * returned; otherwise, true will be returned.
+	/** 启动默认浏览器打开 URI。如果默认浏览器无法处理指定的 URI，则会调用注册处理该 URI 类型的应用程序。
+	 * 尽量尝试打开 URI，但由于涉及外部应用程序，无法保证 URI 是否真的被打开。
 	 * 
-	 * @param URI the URI to be opened.
-	 * @return false if it is known the uri was not opened, true otherwise. */
+	 * @param URI 要打开的 URI
+	 * @return 如果已知 URI 未被打开则返回 false，否则返回 true */
 	public boolean openURI (String URI);
 }

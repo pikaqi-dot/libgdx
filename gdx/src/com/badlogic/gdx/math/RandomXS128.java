@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>XS128 伪随机数生成器</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

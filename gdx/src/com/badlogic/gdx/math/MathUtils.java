@@ -18,38 +18,52 @@ package com.badlogic.gdx.math;
 
 import java.util.Random;
 
-/** Utility and fast math functions.
+/** <b>数学工具类。</b>
+ * 提供常用的数学常数、实用函数和快速数学函数。
  * <p>
- * Thanks to Riven on JavaGaming.org for the basis of sin/cos/floor/ceil.
+ * 包含：PI、PI2、HALF_PI、角度弧度转换、快速三角函数（查表）、
+ * 随机数生成、四舍五入/取整、插值、数值比较、角度运算等。
+ * 感谢 JavaGaming.org 的 Riven 提供 sin/cos/floor/ceil 的基础实现。
  * @author Nathan Sweet */
 public final class MathUtils {
 
 	private MathUtils () {
 	}
 
+	/** 纳秒转秒的系数 */
 	static public final float nanoToSec = 1 / 1000000000f;
 
 	// ---
+	/** 32位浮点数的默认舍入误差 */
 	static public final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
+	/** 圆周率 PI（3.14159265...） */
 	static public final float PI = (float)Math.PI;
+	/** 2 * PI（完整圆周） */
 	static public final float PI2 = PI * 2;
+	/** PI / 2（直角） */
 	static public final float HALF_PI = PI / 2;
 
+	/** 自然对数的底 e */
 	static public final float E = (float)Math.E;
 
+	/** 正弦表位数：14位 -> 16384个条目，约16KB。增加位数提高精度 */
 	static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
+	/** 正弦表掩码：用于将角度映射到表索引 */
 	static private final int SIN_MASK = ~(-1 << SIN_BITS);
+	/** 正弦表条目数：2^SIN_BITS */
 	static private final int SIN_COUNT = SIN_MASK + 1;
 
 	static private final float radFull = PI2;
 	static private final float degFull = 360;
+	/** 弧度到表索引的转换因子 */
 	static private final float radToIndex = SIN_COUNT / radFull;
+	/** 角度到表索引的转换因子 */
 	static private final float degToIndex = SIN_COUNT / degFull;
 
-	/** multiply by this to convert from radians to degrees */
+	/** 弧度转度的系数（180 / PI） */
 	static public final float radiansToDegrees = 180f / PI;
 	static public final float radDeg = radiansToDegrees;
-	/** multiply by this to convert from degrees to radians */
+	/** 度转弧度的系数（PI / 180） */
 	static public final float degreesToRadians = PI / 180;
 	static public final float degRad = degreesToRadians;
 
@@ -70,24 +84,28 @@ public final class MathUtils {
 
 	/** Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
 	 * inclusive). */
+	/** 快速正弦函数（查表实现，精度 O(2^-14)）。比 Math.sin() 快约 5-10 倍 */
 	static public float sin (float radians) {
 		return Sin.table[(int)(radians * radToIndex) & SIN_MASK];
 	}
 
 	/** Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
 	 * inclusive). */
+	/** 快速余弦函数（查表实现）。cos(x) = sin(x + PI/2) */
 	static public float cos (float radians) {
 		return Sin.table[(int)((radians + HALF_PI) * radToIndex) & SIN_MASK];
 	}
 
 	/** Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
 	 * inclusive). */
+	/** 快速正弦函数（角度制，查表实现） */
 	static public float sinDeg (float degrees) {
 		return Sin.table[(int)(degrees * degToIndex) & SIN_MASK];
 	}
 
 	/** Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
 	 * inclusive). */
+	/** 快速余弦函数（角度制，查表实现） */
 	static public float cosDeg (float degrees) {
 		return Sin.table[(int)((degrees + 90) * degToIndex) & SIN_MASK];
 	}
@@ -440,11 +458,13 @@ public final class MathUtils {
 	}
 
 	/** Returns a random number between 0 (inclusive) and the specified value (exclusive). */
+	/** 返回 [0, range) 范围内的随机浮点数。使用 XS128 算法。 */
 	static public float random (float range) {
 		return random.nextFloat() * range;
 	}
 
 	/** Returns a random number between start (inclusive) and end (exclusive). */
+	/** 返回 [start, end] 范围内的随机浮点数。 */
 	static public float random (float start, float end) {
 		return start + random.nextFloat() * (end - start);
 	}
@@ -531,6 +551,8 @@ public final class MathUtils {
 		return value;
 	}
 
+	/** 将值钳制到 [min, max] 范围内。
+	 * 如果 value < min 返回 min，value > max 返回 max，否则返回 value。 */
 	static public float clamp (float value, float min, float max) {
 		if (value < min) return min;
 		if (value > max) return max;
@@ -546,6 +568,9 @@ public final class MathUtils {
 	// ---
 
 	/** Linearly interpolates between fromValue to toValue on progress position. */
+	/** 线性插值。
+	 * result = fromValue + (toValue - fromValue) * progress
+	 * @param progress 插值进度 [0,1] */
 	static public float lerp (float fromValue, float toValue, float progress) {
 		return fromValue + (toValue - fromValue) * progress;
 	}
@@ -652,6 +677,8 @@ public final class MathUtils {
 	/** Returns true if a is nearly equal to b. The function uses the default floating error tolerance.
 	 * @param a the first value.
 	 * @param b the second value. */
+	/** 在默认误差范围内比较两个浮点数是否相等（使用 FLOAT_ROUNDING_ERROR）。
+	 * 避免直接使用 == 比较浮点数导致的精度问题。 */
 	static public boolean isEqual (float a, float b) {
 		return Math.abs(a - b) <= FLOAT_ROUNDING_ERROR;
 	}

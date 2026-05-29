@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>缓存优化的正交 Tiled 地图渲染器，将静态瓦片预渲染到缓存。</b>
+ * 
  * Copyright 2014 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

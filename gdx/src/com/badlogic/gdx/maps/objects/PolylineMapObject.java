@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>折线地图对象，由顶点数组定义的折线路径。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

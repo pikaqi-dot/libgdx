@@ -9,9 +9,8 @@ import com.badlogic.gdx.utils.OrderedSet;
 
 import java.util.Iterator;
 
-/** Manages selected objects. Optionally fires a {@link ChangeEvent} on an actor. Selection changes can be vetoed via
- * {@link ChangeEvent#cancel()}.
- * @author Nathan Sweet */
+/** <b>选择管理器，管理列表/表格中的选中项。</b>
+* @author Nathan Sweet */
 public class Selection<T> implements Disableable, Iterable<T> {
 	private @Null Actor actor;
 	final OrderedSet<T> selected = new OrderedSet();

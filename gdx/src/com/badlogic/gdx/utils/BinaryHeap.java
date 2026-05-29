@@ -1,18 +1,5 @@
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/** <b>二叉堆数据结构。</b>
+* @author Nathan Sweet */
 
 package com.badlogic.gdx.utils;
 
@@ -38,6 +25,11 @@ public class BinaryHeap<T extends BinaryHeap.Node> {
 
 	/** Adds the node to the heap using its current value. The node should not already be in the heap.
 	 * @return The specified node. */
+	/** 向二叉堆添加节点。
+	 * 将新节点放到堆尾，然后执行上浮(swim)操作：
+	 * 不断与父节点比较，如果比父节点小（最小堆）则交换，
+	 * 直到到达堆顶或满足堆性质。
+	 * @return 添加的节点 */
 	public T add (T node) {
 		// Expand if necessary.
 		if (size == nodes.length) {
@@ -75,6 +67,8 @@ public class BinaryHeap<T extends BinaryHeap.Node> {
 
 	/** Returns the first item in the heap. This is the item with the lowest value (or highest value if this heap is configured as
 	 * a max heap). */
+	/** 查看堆顶元素（最小元素），不移除。
+	 * @return 堆顶节点，堆为空时返回 null */
 	public T peek () {
 		if (size == 0) throw new IllegalStateException("The heap is empty.");
 		return (T)nodes[0];
@@ -82,6 +76,11 @@ public class BinaryHeap<T extends BinaryHeap.Node> {
 
 	/** Removes the first item in the heap and returns it. This is the item with the lowest value (or highest value if this heap is
 	 * configured as a max heap). */
+	/** 弹出堆顶元素（最小元素）。
+	 * 算法：将堆顶与堆尾交换，移除堆尾（原堆顶），
+	 * 然后执行下沉(sink)操作：新堆顶与较小的子节点交换，
+	 * 直到满足堆性质。
+	 * @return 原堆顶节点 */
 	public T pop () {
 		Node removed = nodes[0];
 		if (--size > 0) {

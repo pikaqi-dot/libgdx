@@ -22,7 +22,8 @@ import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Disposable;
 
-/** A generic level map implementation.
+/** <b>通用地图实现基类。</b>
+ * 一个通用的关卡地图实现。
  * </p>
  * 
  * A map has {@link MapProperties} which describe general attributes. Availability of properties depends on the type of map, e.g.

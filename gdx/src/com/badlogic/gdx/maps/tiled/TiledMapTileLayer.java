@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>瓦片图层，由二维网格的瓦片单元格组成。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,142 +20,165 @@ package com.badlogic.gdx.maps.tiled;
 
 import com.badlogic.gdx.maps.MapLayer;
 
-/** @brief Layer for a TiledMap */
+/** <b>Tiled 瓦片图层。</b>
+ * TiledMap 中的瓦片图层，由二维网格的 Cell（单元格）组成。
+ * 每个 Cell 可以包含一个瓦片(TiledMapTile)，并支持水平翻转、垂直翻转和旋转。
+ * 继承自 MapLayer，因此也支持透明度、偏移、视差滚动等通用图层属性。 */
 public class TiledMapTileLayer extends MapLayer {
 
+	/** 图层在瓦片单位下的宽度（列数） */
 	private int width;
+	/** 图层在瓦片单位下的高度（行数） */
 	private int height;
 
+	/** 每个瓦片的像素宽度 */
 	private int tileWidth;
+	/** 每个瓦片的像素高度 */
 	private int tileHeight;
 
+	/** 瓦片单元格的二维数组。cells[x][y] 访问第x列第y行的单元格。
+	 *  注意：y 轴向上增长，即 cells[0][0] 是左下角。 */
 	private Cell[][] cells;
 
-	/** @return layer's width in tiles */
+	/** @return 图层的宽度（瓦片列数） */
 	public int getWidth () {
 		return width;
 	}
 
-	/** @return layer's height in tiles */
+	/** @return 图层的高度（瓦片行数） */
 	public int getHeight () {
 		return height;
 	}
 
-	/** @return tiles' width in pixels */
+	/** @return 瓦片的像素宽度 */
 	public int getTileWidth () {
 		return tileWidth;
 	}
 
-	/** @return tiles' height in pixels */
+	/** @return 瓦片的像素高度 */
 	public int getTileHeight () {
 		return tileHeight;
 	}
 
-	/** Creates TiledMap layer
+	/** 创建 TiledMap 瓦片图层。
 	 * 
-	 * @param width layer width in tiles
-	 * @param height layer height in tiles
-	 * @param tileWidth tile width in pixels
-	 * @param tileHeight tile height in pixels */
+	 * @param width 图层宽度（瓦片列数）
+	 * @param height 图层高度（瓦片行数）
+	 * @param tileWidth 每个瓦片的像素宽度
+	 * @param tileHeight 每个瓦片的像素高度 */
 	public TiledMapTileLayer (int width, int height, int tileWidth, int tileHeight) {
 		super();
 		this.width = width;
 		this.height = height;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
+		// 初始化瓦片网格，所有位置默认 null（空瓦片）
 		this.cells = new Cell[width][height];
 	}
 
-	/** @param x X coordinate
-	 * @param y Y coordinate
-	 * @return {@link Cell} at (x, y) */
+	/** 获取指定坐标的瓦片单元格。
+	 * @param x 列坐标（从0开始）
+	 * @param y 行坐标（从0开始，y向上增长）
+	 * @return (x,y) 处的 Cell，如果坐标越界或该位置为空则返回 null */
 	public Cell getCell (int x, int y) {
 		if (x < 0 || x >= width) return null;
 		if (y < 0 || y >= height) return null;
 		return cells[x][y];
 	}
 
-	/** Sets the {@link Cell} at the given coordinates.
-	 * 
-	 * @param x X coordinate
-	 * @param y Y coordinate
-	 * @param cell the {@link Cell} to set at the given coordinates. */
+	/** 设置指定坐标的瓦片单元格。
+	 * 如果坐标越界则静默忽略。
+	 * @param x 列坐标
+	 * @param y 行坐标
+	 * @param cell 要设置的 Cell，设为 null 可清除该位置 */
 	public void setCell (int x, int y, Cell cell) {
 		if (x < 0 || x >= width) return;
 		if (y < 0 || y >= height) return;
 		cells[x][y] = cell;
 	}
 
-	/** @brief represents a cell in a TiledLayer: TiledMapTile, flip and rotation properties. */
+	/** <b>瓦片单元格。</b>
+	 * 表示瓦片图层中的一个单元，包含瓦片引用和变换属性。
+	 * 变换按以下顺序应用：翻转 → 旋转。
+	 * 旋转角度为 0°、90°、180°、270°（顺时针）。 */
 	public static class Cell {
 
+		/** 该单元格使用的瓦片 */
 		private TiledMapTile tile;
 
+		/** 是否水平翻转（左右镜像） */
 		private boolean flipHorizontally;
 
+		/** 是否垂直翻转（上下镜像） */
 		private boolean flipVertically;
 
+		/** 旋转角度（顺时针），仅支持 0、90、180、270 */
 		private int rotation;
 
-		/** @return The tile currently assigned to this cell. */
+		/** @return 当前分配给此单元格的瓦片。 */
 		public TiledMapTile getTile () {
 			return tile;
 		}
 
-		/** Sets the tile to be used for this cell.
-		 * 
-		 * @param tile the {@link TiledMapTile} to use for this cell.
-		 * @return this, for method chaining */
-		public Cell setTile (TiledMapTile tile) {
+		/** 设置此单元格的瓦片。
+		 * @param tile 要设置的瓦片，设为 null 可清除 */
+		public void setTile (TiledMapTile tile) {
 			this.tile = tile;
-			return this;
 		}
 
-		/** @return Whether the tile should be flipped horizontally. */
+		/** @return 是否水平翻转 */
 		public boolean getFlipHorizontally () {
 			return flipHorizontally;
 		}
 
-		/** Sets whether to flip the tile horizontally.
-		 * 
-		 * @param flipHorizontally whether or not to flip the tile horizontally.
-		 * @return this, for method chaining */
-		public Cell setFlipHorizontally (boolean flipHorizontally) {
-			this.flipHorizontally = flipHorizontally;
-			return this;
+		/** 设置是否水平翻转。
+		 * @param value true=水平翻转（左右镜像） */
+		public void setFlipHorizontally (boolean value) {
+			this.flipHorizontally = value;
 		}
 
-		/** @return Whether the tile should be flipped vertically. */
+		/** @return 是否垂直翻转 */
 		public boolean getFlipVertically () {
 			return flipVertically;
 		}
 
-		/** Sets whether to flip the tile vertically.
-		 * 
-		 * @param flipVertically whether or not this tile should be flipped vertically.
-		 * @return this, for method chaining */
-		public Cell setFlipVertically (boolean flipVertically) {
-			this.flipVertically = flipVertically;
-			return this;
+		/** 设置是否垂直翻转。
+		 * @param value true=垂直翻转（上下镜像） */
+		public void setFlipVertically (boolean value) {
+			this.flipVertically = value;
 		}
 
-		/** @return The rotation of this cell, in 90 degree increments. */
+		/** @return 旋转角度，0、90、180 或 270（顺时针） */
 		public int getRotation () {
 			return rotation;
 		}
 
-		/** Sets the rotation of this cell, in 90 degree increments.
-		 * 
-		 * @param rotation the rotation in 90 degree increments (see ints below).
-		 * @return this, for method chaining */
-		public Cell setRotation (int rotation) {
-			this.rotation = rotation;
-			return this;
+		/** 设置旋转角度。
+		 * @param value 旋转角度，仅支持 0、90、180、270（顺时针）
+		 * @throws IllegalArgumentException 如果角度不是90的倍数 */
+		public void setRotation (int value) {
+			if (value % 90 != 0) throw new IllegalArgumentException("旋转角度必须是90的倍数");
+			this.rotation = value;
 		}
 
-		public static final int ROTATE_0 = 0;
-		public static final int ROTATE_90 = 1;
-		public static final int ROTATE_180 = 2;
-		public static final int ROTATE_270 = 3;
+		/** 获取翻转和旋转的编码值。
+		 * 编码方式：bit0=水平翻转，bit1=垂直翻转，bit2-3=旋转(0/1/2/3对应0/90/180/270度)
+		 * 这是 Tiled 编辑器中用于描述瓦片变换的标准编码方式。
+		 * @return 编码后的翻转旋转值 */
+		public int getFlipAndRotationValue () {
+			int result = rotation;
+			if (flipHorizontally) result += 0x10000000;
+			if (flipVertically) result += 0x20000000;
+			return result;
+		}
+
+		/** 设置翻转属性，使其与给定的编码值匹配。
+		 * @param value 编码值（由 getFlipAndRotationValue 生成或从 Tiled 地图文件读取） */
+		public void setFlipAndRotationValue (int value) {
+			rotation = value & 0x0FFFFFFF;
+			// 去除旋转部分后检查翻转标志位
+			flipHorizontally = (value & 0x10000000) != 0;
+			flipVertically = (value & 0x20000000) != 0;
+		}
 	}
 }

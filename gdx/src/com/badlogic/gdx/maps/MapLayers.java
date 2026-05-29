@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>地图图层集合，图层按顺序排列，通过索引或名称访问。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

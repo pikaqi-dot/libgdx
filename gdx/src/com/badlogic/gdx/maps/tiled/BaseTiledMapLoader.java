@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>Tiled 地图加载器基类，提供通用加载逻辑。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>地图属性集合，以键值对形式存储字符串索引的属性。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

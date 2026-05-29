@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>纹理地图对象，包含纹理引用和变换信息。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

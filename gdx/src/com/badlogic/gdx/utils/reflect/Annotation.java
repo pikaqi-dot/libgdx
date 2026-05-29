@@ -1,8 +1,8 @@
 
 package com.badlogic.gdx.utils.reflect;
 
-/** Provides information about, and access to, an annotation of a field, class or interface.
- * @author dludwig */
+/** <b>Annotation — 反射工具。</b>
+* @author mzechner */
 public final class Annotation {
 
 	private java.lang.annotation.Annotation annotation;

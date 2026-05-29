@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>耳切法三角剖分器，用于简单多边形的三角化</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -64,6 +66,34 @@ public class EarClippingTriangulator {
 	 * @param vertices pairs describing vertices of the polygon, in either clockwise or counterclockwise order.
 	 * @return triples of triangle indices in clockwise order. Note the returned array is reused for later calls to the same
 	 *         method. */
+	/** 对简单多边形执行耳切法三角剖分。
+	 * 算法原理：
+	 * 1. 将输入顶点调整为顺时针顺序
+	 * 2. 分类所有顶点为凸(convex)或凹(concave)
+	 * 3. 重复查找"耳朵"（由相邻顶点组成的凸三角形，内部不含其他顶点）
+	 * 4. 切掉耳朵（输出三角形），更新相邻顶点类型
+	 * 5. 直到只剩3个顶点，形成最后一个三角形
+	 * @param vertices x,y 成对出现的多边形顶点
+	 * @param offset 偏移
+	 
+	*
+	 
+	@
+	p
+	a
+	r
+	a
+	m
+	 
+	c
+	o
+	u
+	n
+	t
+	 
+	总
+	数
+	 * @return 三角形顶点索引（每3个一组） */
 	public ShortArray computeTriangles (float[] vertices, int offset, int count) {
 		this.vertices = vertices;
 		int vertexCount = this.vertexCount = count / 2;
@@ -96,6 +126,9 @@ public class EarClippingTriangulator {
 		return triangles;
 	}
 
+	/** 执行耳切法主循环。
+	 * 每次迭代找到一个耳尖(ear tip)并切除，
+	 * 更新相邻顶点的凸凹类型，直到剩余顶点数 <= 3 */
 	private void triangulate () {
 		int[] vertexTypes = this.vertexTypes.items;
 
@@ -130,6 +163,11 @@ public class EarClippingTriangulator {
 			vertices[next], vertices[next + 1]);
 	}
 
+	/** 查找耳尖顶点。耳尖需满足：
+	 * 1. 是凸顶点（不是凹顶点）
+	 * 2. 由其和前后邻点组成的三角形内部不包含其他任何顶点
+	 * 如果找不到耳尖（退化多边形），使用 Held 的 FIST 方法：
+	 * 优先返回凸顶点或切线顶点 */
 	private int findEarTip () {
 		int vertexCount = this.vertexCount;
 		for (int i = 0; i < vertexCount; i++)
@@ -148,6 +186,10 @@ public class EarClippingTriangulator {
 		return 0; // If all vertices are concave, just return the first one.
 	}
 
+	/** 判断指定顶点是否为耳尖。
+	 * 通过检查三角形(p1,p2,p3)内是否包含其他顶点来判断：
+	 * 对于每个不在三角形边上的顶点v，如果v在三角形内部（三个叉积都 >= 0），
+	 * 则p2不是耳尖 */
 	private boolean isEarTip (int earTipIndex) {
 		int[] vertexTypes = this.vertexTypes.items;
 		if (vertexTypes[earTipIndex] == CONCAVE) return false;
@@ -185,6 +227,10 @@ public class EarClippingTriangulator {
 		return true;
 	}
 
+	/** 切除耳尖顶点：
+	 * 1. 将三角形(prev, earTip, next)加入结果
+	 * 2. 从索引数组中移除耳尖顶点
+	 * 3. 更新顶点计数 */
 	private void cutEarTip (int earTipIndex) {
 		short[] indices = this.indices;
 		ShortArray triangles = this.triangles;
@@ -206,6 +252,11 @@ public class EarClippingTriangulator {
 		return (index + 1) % vertexCount;
 	}
 
+	/** 计算有向面积符号，用于判断点的位置关系。
+	 * 使用鞋带公式(shoelace formula)计算三角形面积：
+	 * area = (p1x*(p3y-p2y) + p2x*(p1y-p3y) + p3x*(p2y-p1y)) / 2
+	 * 但此处只返回符号，省略除以2
+	 * @return 1（逆时针）、-1（顺时针）或 0（共线） */
 	static private int computeSpannedAreaSign (float p1x, float p1y, float p2x, float p2y, float p3x, float p3y) {
 		float area = p1x * (p3y - p2y);
 		area += p2x * (p1y - p3y);

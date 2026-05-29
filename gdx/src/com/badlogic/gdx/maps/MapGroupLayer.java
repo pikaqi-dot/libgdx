@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>地图组图层，可包含子图层，用于图层分组管理。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

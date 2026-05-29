@@ -17,7 +17,9 @@ import java.io.Serializable;
 
 import com.badlogic.gdx.utils.NumberUtils;
 
-/** A convenient 2D circle class.
+/** <b>2D 圆形类。</b>
+ * 封装了一个二维圆形，由圆心坐标 (x, y) 和半径 (radius) 定义。
+ * 提供圆点碰撞检测、圆与圆重叠检测等功能。
  * @author mzechner */
 public class Circle implements Serializable, Shape2D {
 	public float x, y;

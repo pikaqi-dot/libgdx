@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>3D 模型实例，包含位置/旋转/缩放</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

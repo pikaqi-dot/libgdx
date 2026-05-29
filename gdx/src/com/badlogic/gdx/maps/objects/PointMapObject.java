@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>点地图对象，由单个坐标点定义的位置标记。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -192,6 +192,12 @@ public class ParticleEmitter {
 		this.activeCount += count;
 	}
 
+	/** 更新粒子发射器状态。
+	 * 包括：
+	 * 1. 根据发射率生成新粒子
+	 * 2. 更新已有粒子的位置、速度、颜色、大小
+	 * 3. 移除生命周期结束的粒子
+	 * @param delta 距上一帧的时间（秒） */
 	public void update (float delta) {
 		accumulator += delta * 1000;
 		if (accumulator < 1) return;
@@ -245,6 +251,9 @@ public class ParticleEmitter {
 		this.activeCount = activeCount;
 	}
 
+	/** 绘制所有活动粒子。
+	 * 根据粒子的位置、大小、旋转角度和颜色，
+	 * 使用 Batch 批量绘制每个粒子的纹理。 */
 	public void draw (Batch batch) {
 		if (premultipliedAlpha) {
 			batch.setBlendFunction(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -397,6 +406,9 @@ public class ParticleEmitter {
 		return particles;
 	}
 
+	/** 激活/初始化指定索引的粒子。
+	 * 根据发射器的各种设置（速度、角度、大小、颜色等范围）
+	 * 为粒子赋初始值。使用插值器计算带随机偏移的初始值。 */
 	private void activateParticle (int index) {
 		Sprite sprite = null;
 		switch (spriteMode) {

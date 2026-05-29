@@ -1,18 +1,6 @@
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+/** <b>凸包计算。</b>
+* 计算一组点的凸包。
+* @author xoppa */
 
 package com.badlogic.gdx.math;
 
@@ -47,6 +35,18 @@ public class ConvexHull {
 	 *           hull algorithm. If sorting is done the input array is not modified and count additional working memory is needed.
 	 * @return pairs of coordinates that describe the convex hull polygon in counterclockwise order. Note the returned array is
 	 *         reused for later calls to the same method. */
+	/** 使用 Andrew's Monotone Chain 算法计算凸包。
+	 * 算法步骤：
+	 * 1. 先按 x 坐标排序所有点（x相同则按y）
+	 * 2. 构建下凸包（从左到右扫描）
+	 * 3. 构建上凸包（从右到左扫描）
+	 * 4. 合并上下凸包得到完整凸包
+	 * 时间复杂度 O(n log n)，n 为点数
+	 * @param points x,y 成对出现的点坐标
+	 * @param offset 起始偏移
+	 * @param count 坐标总数（x+y），必须为偶数
+	 * @param sorted 是否已排序
+	 * @return 逆时针排列的凸包顶点坐标 */
 	public FloatArray computePolygon (float[] points, int offset, int count, boolean sorted) {
 		int end = offset + count;
 
@@ -62,6 +62,9 @@ public class ConvexHull {
 		FloatArray hull = this.hull;
 		hull.clear();
 
+		// 构建下凸包：从左向右扫描所有点，
+		// 维护一个栈，检查每加入一个点时是否形成顺时针转弯（ccw <= 0），
+		// 如果是则弹出栈顶的点，直到满足逆时针条件
 		// Lower hull.
 		for (int i = offset; i < end; i += 2) {
 			float x = points[i];
@@ -72,6 +75,9 @@ public class ConvexHull {
 			hull.add(y);
 		}
 
+		// 构建上凸包：从右向左扫描所有点，
+		// 同样维护栈检查转弯方向，
+		// 注意从 hull.size + 2 开始保证与下凸包起点重合
 		// Upper hull.
 		for (int i = end - 4, t = hull.size + 2; i >= offset; i -= 2) {
 			float x = points[i];
@@ -154,6 +160,10 @@ public class ConvexHull {
 	}
 
 	/** Returns > 0 if the points are a counterclockwise turn, < 0 if clockwise, and 0 if colinear. */
+	/** 计算三个点的转向方向（叉积）。
+	 * 使用栈中最后两个点(p1,p2)和新点(p3)计算叉积：
+	 * (p2-p1) x (p3-p1)
+	 * @return >0 逆时针转，<0 顺时针转，=0 共线 */
 	private float ccw (float p3x, float p3y) {
 		FloatArray hull = this.hull;
 		int size = hull.size;

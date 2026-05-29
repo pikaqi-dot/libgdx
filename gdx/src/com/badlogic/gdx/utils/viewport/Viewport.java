@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>视口基类，管理摄像机投影和窗口适配</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>JSON 字符串值</b>
+ * 
  * Copyright 2024 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -19,7 +19,9 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.Scaling;
 
-/** Encapsulates a 2D rectangle defined by its corner point in the bottom left and its extents in x (width) and y (height).
+/** <b>2D 矩形类。</b>
+ * 封装了一个二维矩形，由左下角坐标 (x, y) 和宽高 (width, height) 定义。
+ * 提供矩形碰撞检测、合并、缩放等功能。
  * @author badlogicgames@gmail.com */
 public class Rectangle implements Serializable, Shape2D {
 	/** Static temporary rectangle. Use with care! Use only when sure other code will not also use this. */
@@ -29,8 +31,14 @@ public class Rectangle implements Serializable, Shape2D {
 	static public final Rectangle tmp2 = new Rectangle();
 
 	private static final long serialVersionUID = 5733252015138115702L;
-	public float x, y;
-	public float width, height;
+	/** 矩形左下角 x 坐标 */
+	public float x;
+	/** 矩形左下角 y 坐标 */
+	public float y;
+	/** 矩形的宽度 */
+	public float width;
+	/** 矩形的高度 */
+	public float height;
 
 	/** Constructs a new rectangle with all values set to zero */
 	public Rectangle () {

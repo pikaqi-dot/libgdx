@@ -15,12 +15,8 @@ package com.badlogic.gdx.utils;
 
 import java.util.Comparator;
 
-/** Provides methods to sort arrays of objects. Sorting requires working memory and this class allows that memory to be reused to
- * avoid allocation. The sorting is otherwise identical to the Arrays.sort methods (uses timsort).<br>
- * <br>
- * Note that sorting primitive arrays with the Arrays.sort methods does not allocate memory (unless sorting large arrays of char,
- * short, or byte).
- * @author Nathan Sweet */
+/** <b>排序工具类。</b>
+* @author Nathan Sweet */
 public class Sort {
 	static private Sort instance;
 

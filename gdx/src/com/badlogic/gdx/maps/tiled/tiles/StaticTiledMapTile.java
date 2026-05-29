@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>静态瓦片，使用固定纹理的不可变瓦片。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,21 +23,33 @@ import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 
-/** @brief Represents a non changing {@link TiledMapTile} (can be cached) */
+/** <b>静态瓦片 — 使用固定纹理的不可变瓦片。</b>
+ * 这是最常见的瓦片类型，每个瓦片对应一个固定的纹理区域。
+ * 由于纹理内容不会随时间变化，渲染器可以对其进行缓存优化。
+ * 对应 Tiled 编辑器中放置的普通瓦片。
+ * 
+ * 支持属性：ID、纹理区域、混合模式、渲染偏移量、自定义属性、内置对象 */
 public class StaticTiledMapTile implements TiledMapTile {
 
+	/** 瓦片在瓦片集中的唯一 ID */
 	private int id;
 
+	/** 渲染混合模式，默认使用 ALPHA 透明度混合 */
 	private BlendMode blendMode = BlendMode.ALPHA;
 
+	/** 瓦片自定义属性集合（延迟初始化，首次访问时创建） */
 	private MapProperties properties;
 
+	/** 瓦片中包含的地图对象（如碰撞区域、事件触发器，延迟初始化） */
 	private MapObjects objects;
 
+	/** 瓦片使用的纹理区域 */
 	private TextureRegion textureRegion;
 
+	/** 渲染时的 X 偏移量（像素） */
 	private float offsetX;
 
+	/** 渲染时的 Y 偏移量（像素） */
 	private float offsetY;
 
 	@Override
@@ -58,6 +72,7 @@ public class StaticTiledMapTile implements TiledMapTile {
 		this.blendMode = blendMode;
 	}
 
+	/** @return 瓦片属性集合（首次调用时创建） */
 	@Override
 	public MapProperties getProperties () {
 		if (properties == null) {
@@ -66,6 +81,7 @@ public class StaticTiledMapTile implements TiledMapTile {
 		return properties;
 	}
 
+	/** @return 瓦片中的地图对象集合（首次调用时创建） */
 	@Override
 	public MapObjects getObjects () {
 		if (objects == null) {
@@ -104,16 +120,14 @@ public class StaticTiledMapTile implements TiledMapTile {
 		this.offsetY = offsetY;
 	}
 
-	/** Creates a static tile with the given region
-	 * 
-	 * @param textureRegion the {@link TextureRegion} to use. */
+	/** 创建使用指定纹理区域的静态瓦片
+	 * @param textureRegion 瓦片使用的纹理区域 */
 	public StaticTiledMapTile (TextureRegion textureRegion) {
 		this.textureRegion = textureRegion;
 	}
 
-	/** Copy constructor
-	 * 
-	 * @param copy the StaticTiledMapTile to copy. */
+	/** 复制构造函数
+	 * @param copy 要复制的源瓦片 */
 	public StaticTiledMapTile (StaticTiledMapTile copy) {
 		if (copy.properties != null) {
 			getProperties().putAll(copy.properties);

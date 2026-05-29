@@ -22,7 +22,8 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * <p>
- * A Sound is a short audio clip that can be played numerous times in parallel. It's completely loaded into memory so only load
+ * <b>音效接口。</b>
+ * Sound 是一个短音频片段，可以多次并行播放，完全加载到内存中，适合播放短促音效。 It's completely loaded into memory so only load
  * small audio files. Call the {@link #dispose()} method when you're done using the Sound.
  * </p>
  * 

@@ -18,14 +18,27 @@ package com.badlogic.gdx;
 
 /**
  * <p>
- * An {@link ApplicationListener} that delegates to a {@link Screen}. This allows an application to easily have multiple screens.
+ * <b>游戏类，屏幕管理器。</b>
+ * 一个 {@link ApplicationListener} 的抽象实现，将生命周期方法委托给 {@link Screen}。
+ * 这使得应用程序可以轻松管理多个屏幕（如：菜单屏幕、游戏屏幕、设置屏幕等）。
  * </p>
  * <p>
- * Screens are not disposed automatically. You must handle whether you want to keep screens around or dispose of them when another
- * screen is set.
+ * <b>注意：</b>Screen 不会自动释放。你需要自行决定切换屏幕时是保留还是释放旧的 Screen。
+ * </p>
+ * 
+ * <p>
+ * <b>使用示例：</b><br>
+ * <code>
+ * public class MyGame extends Game {<br>
+ * &nbsp;&nbsp;public void create() {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;setScreen(new MainMenuScreen(this));<br>
+ * &nbsp;&nbsp;}<br>
+ * }
+ * </code>
  * </p>
  */
 public abstract class Game implements ApplicationListener {
+	/** 当前活跃的屏幕 */
 	protected Screen screen;
 
 	@Override
@@ -53,9 +66,8 @@ public abstract class Game implements ApplicationListener {
 		if (screen != null) screen.resize(width, height);
 	}
 
-	/** Sets the current screen. {@link Screen#hide()} is called on any old screen, and {@link Screen#show()} is called on the new
-	 * screen, if any.
-	 * @param screen may be {@code null} */
+	/** 设置当前屏幕。会调用旧屏幕的 {@link Screen#hide()} 和新屏幕的 {@link Screen#show()}。
+	 * @param screen 新屏幕，可以为 {@code null} */
 	public void setScreen (Screen screen) {
 		if (this.screen != null) this.screen.hide();
 		this.screen = screen;
@@ -65,7 +77,7 @@ public abstract class Game implements ApplicationListener {
 		}
 	}
 
-	/** @return the currently active {@link Screen}. */
+	/** @return 当前活跃的 {@link Screen} */
 	public Screen getScreen () {
 		return screen;
 	}

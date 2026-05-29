@@ -26,6 +26,8 @@ import java.util.Date;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 /** {@code PropertiesUtils} is a helper class that allows you to load and store key/value pairs of an
+ * <b>属性文件工具类</b>
+ * 
  * {@code ObjectMap<String,String>} with the same line-oriented syntax supported by {@code java.util.Properties}. */
 public final class PropertiesUtils {
 

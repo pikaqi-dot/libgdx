@@ -4,6 +4,8 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.utils.DefaultPool.PoolSupplier;
 
 /** A class that can be used to handle multiple pools together. Explicit pool registration is needed via
+ * <b>对象池管理器</b>
+ * 
  * {@link PoolManager#addPool(Class, PoolSupplier)}/{@link PoolManager#addPool(Class, Pool)}. */
 @SuppressWarnings("unchecked")
 public class PoolManager {

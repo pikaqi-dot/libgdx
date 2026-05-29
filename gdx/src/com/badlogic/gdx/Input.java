@@ -22,31 +22,30 @@ import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
 /**
- * <p>
- * Interface to the input facilities. This allows polling the state of the keyboard, the touch screen and the accelerometer. On
- * some backends (desktop, gwt, etc) the touch screen is replaced by mouse input. The accelerometer is of course not available on
- * all backends.
+ * <b>输入模块接口。</b>
+ * 提供输入设施的访问接口。可以轮询键盘、触摸屏和加速度计的状态。
+ * 在某些后端（桌面、GWT 等），触摸屏被鼠标输入替代。
+ * 加速度计在某些后端不可用。
  * </p>
  * 
  * <p>
- * Instead of polling for events, one can process all input events with an {@link InputProcessor}. You can set the InputProcessor
- * via the {@link #setInputProcessor(InputProcessor)} method. It will be called before the {@link ApplicationListener#render()}
- * method in each frame.
+ * 除了轮询事件，还可以使用 {@link InputProcessor} 处理所有输入事件。
+ * 通过 {@link #setInputProcessor(InputProcessor)} 设置后，
+ * 处理器会在每帧的 {@link ApplicationListener#render()} 方法之前被调用。
  * </p>
  * 
  * <p>
- * Keyboard keys are translated to the constants in {@link Keys} transparently on all systems. Do not use system specific key
- * constants.
+ * 键盘按键在所有系统上统一映射为 {@link Keys} 中的常量。不要使用系统特定的键常量。
  * </p>
  * 
  * <p>
- * The class also offers methods to use (and test for the presence of) other input systems like vibration, compass, on-screen
- * keyboards, and cursor capture. Support for simple input dialogs is also provided.
+ * 本接口还提供了使用（和检测）其他输入系统的方法，如振动、指南针、屏幕键盘和鼠标捕获。
+ * 同时也提供简单的输入对话框支持。
  * </p>
  * 
  * @author mzechner */
 public interface Input {
-	/** Callback interface for {@link Input#getTextInput(TextInputListener, String, String, String)}
+	/** 文本输入回调接口，用于 {@link Input#getTextInput(TextInputListener, String, String, String)}
 	 * 
 	 * @author mzechner */
 	static public interface TextInputListener {
@@ -55,7 +54,7 @@ public interface Input {
 		public void canceled ();
 	}
 
-	/** Mouse buttons.
+	/** 鼠标按钮常量。
 	 * @author mzechner */
 	static public class Buttons {
 		public static final int LEFT = 0;
@@ -65,7 +64,7 @@ public interface Input {
 		public static final int FORWARD = 4;
 	}
 
-	/** Keys.
+	/** 键盘按键常量。所有平台统一映射。
 	 * 
 	 * @author mzechner */
 	static public class Keys {
@@ -278,8 +277,8 @@ public interface Input {
 
 		public static final int MAX_KEYCODE = 255;
 
-		/** @return a human readable representation of the keycode. The returned value can be used in
-		 *         {@link Input.Keys#valueOf(String)} */
+		/** 将键码转换为人类可读的字符串表示。返回的值可用于 {@link Input.Keys#valueOf(String)}。
+		 * @return 键码对应的字符串名称 */
 		public static String toString (int keycode) {
 			if (keycode < 0) throw new IllegalArgumentException("keycode cannot be negative, keycode: " + keycode);
 			if (keycode > MAX_KEYCODE) throw new IllegalArgumentException("keycode cannot be greater than 255, keycode: " + keycode);
@@ -628,14 +627,15 @@ public interface Input {
 
 		private static ObjectIntMap<String> keyNames;
 
-		/** @param keyname the keyname returned by the {@link Keys#toString(int)} method
-		 * @return the int keycode */
+		/** 根据 {@link Keys#toString(int)} 返回的键名获取对应的键码
+		 * @param keyname 键名称
+		 * @return 键码整数值 */
 		public static int valueOf (String keyname) {
 			if (keyNames == null) initializeKeyNames();
 			return keyNames.get(keyname, -1);
 		}
 
-		/** lazily intialized in {@link Keys#valueOf(String)} */
+		/** 在 {@link Keys#valueOf(String)} 中延迟初始化 */
 		private static void initializeKeyNames () {
 			keyNames = new ObjectIntMap<String>();
 			for (int i = 0; i < 256; i++) {
@@ -645,335 +645,300 @@ public interface Input {
 		}
 	}
 
-	/** Enumeration of potentially available peripherals. Use with {@link Input#isPeripheralAvailable(Peripheral)}.
+	/** 可用外设枚举。配合 {@link Input#isPeripheralAvailable(Peripheral)} 使用。
 	 * @author mzechner */
 	public enum Peripheral {
 		HardwareKeyboard, OnscreenKeyboard, MultitouchScreen, Accelerometer, Compass, Vibrator, HapticFeedback, Gyroscope, RotationVector, Pressure
 	}
 
-	/** @return The acceleration force in m/s^2 applied to the device in the X axis, including the force of gravity */
+	/** @return 作用在设备 X 轴上的加速度力（m/s²），包含重力 */
 	public float getAccelerometerX ();
 
-	/** @return The acceleration force in m/s^2 applied to the device in the Y axis, including the force of gravity */
+	/** @return 作用在设备 Y 轴上的加速度力（m/s²），包含重力 */
 	public float getAccelerometerY ();
 
-	/** @return The acceleration force in m/s^2 applied to the device in the Z axis, including the force of gravity */
+	/** @return 作用在设备 Z 轴上的加速度力（m/s²），包含重力 */
 	public float getAccelerometerZ ();
 
-	/** @return The rate of rotation in rad/s around the X axis */
+	/** @return 绕 X 轴的旋转角速度（rad/s） */
 	public float getGyroscopeX ();
 
-	/** @return The rate of rotation in rad/s around the Y axis */
+	/** @return 绕 Y 轴的旋转角速度（rad/s） */
 	public float getGyroscopeY ();
 
-	/** @return The rate of rotation in rad/s around the Z axis */
+	/** @return 绕 Z 轴的旋转角速度（rad/s） */
 	public float getGyroscopeZ ();
 
-	/** @return The maximum number of pointers supported */
+	/** @return 支持的最大触摸点数 */
 	public int getMaxPointers ();
 
-	/** @return The x coordinate of the last touch on touch screen devices and the current mouse position on desktop for the first
-	 *         pointer in screen coordinates. The screen origin is the top left corner. */
+	/** @return 最后触摸点的 X 坐标（触摸屏设备）或鼠标的 X 坐标（桌面），屏幕原点为左上角 */
 	public int getX ();
 
-	/** Returns the x coordinate in screen coordinates of the given pointer. Pointers are indexed from 0 to n. The pointer id
-	 * identifies the order in which the fingers went down on the screen, e.g. 0 is the first finger, 1 is the second and so on.
-	 * When two fingers are touched down and the first one is lifted the second one keeps its index. If another finger is placed on
-	 * the touch screen the first free index will be used.
+	/** 返回指定触摸点的 X 坐标（屏幕坐标）。触摸点从 0 开始索引。
+	 * 触摸点 ID 标识手指按下屏幕的顺序，例如 0 是第一根手指，1 是第二根，以此类推。
+	 * 当两根手指按下且第一根抬起时，第二根保持其索引。
+	 * 如果有新手指触摸屏幕，将使用第一个空闲索引。
 	 * 
-	 * @param pointer the pointer id.
-	 * @return the x coordinate */
+	 * @param pointer 触摸点 ID
+	 * @return X 坐标 */
 	public int getX (int pointer);
 
-	/** @return the different between the current pointer location and the last pointer location on the x-axis. */
+	/** @return 当前指针位置与上一指针位置在 X 轴上的差值 */
 	public int getDeltaX ();
 
-	/** @return the different between the current pointer location and the last pointer location on the x-axis. */
+	/** @return 当前指针位置与上一指针位置在 X 轴上的差值 */
 	public int getDeltaX (int pointer);
 
-	/** @return The y coordinate of the last touch on touch screen devices and the current mouse position on desktop for the first
-	 *         pointer in screen coordinates. The screen origin is the top left corner. */
+	/** @return 最后触摸点的 Y 坐标（触摸屏设备）或鼠标的 Y 坐标（桌面），屏幕原点为左上角 */
 	public int getY ();
 
-	/** Returns the y coordinate in screen coordinates of the given pointer. Pointers are indexed from 0 to n. The pointer id
-	 * identifies the order in which the fingers went down on the screen, e.g. 0 is the first finger, 1 is the second and so on.
-	 * When two fingers are touched down and the first one is lifted the second one keeps its index. If another finger is placed on
-	 * the touch screen the first free index will be used.
+	/** 返回指定触摸点的 Y 坐标（屏幕坐标）。触摸点从 0 开始索引。
+	 * 触摸点 ID 标识手指按下屏幕的顺序，例如 0 是第一根手指，1 是第二根，以此类推。
+	 * 当两根手指按下且第一根抬起时，第二根保持其索引。
+	 * 如果有新手指触摸屏幕，将使用第一个空闲索引。
 	 * 
-	 * @param pointer the pointer id.
-	 * @return the y coordinate */
+	 * @param pointer 触摸点 ID
+	 * @return Y 坐标 */
 	public int getY (int pointer);
 
-	/** @return the different between the current pointer location and the last pointer location on the y-axis. */
+	/** @return 当前指针位置与上一指针位置在 Y 轴上的差值 */
 	public int getDeltaY ();
 
-	/** @return the different between the current pointer location and the last pointer location on the y-axis. */
+	/** @return 当前指针位置与上一指针位置在 Y 轴上的差值 */
 	public int getDeltaY (int pointer);
 
-	/** @return whether the screen is currently touched. */
+	/** @return 屏幕当前是否被触摸 */
 	public boolean isTouched ();
 
-	/** @return whether a new touch down event just occurred. */
+	/** @return 是否刚刚发生了触摸按下事件 */
 	public boolean justTouched ();
 
-	/** Whether the screen is currently touched by the pointer with the given index. Pointers are indexed from 0 to n. The pointer
-	 * id identifies the order in which the fingers went down on the screen, e.g. 0 is the first finger, 1 is the second and so on.
-	 * When two fingers are touched down and the first one is lifted the second one keeps its index. If another finger is placed on
-	 * the touch screen the first free index will be used.
+	/** 检查指定索引的触摸点当前是否正在触摸屏幕。触摸点从 0 开始索引。
 	 *
-	 * @param pointer the pointer
-	 * @return whether the screen is touched by the pointer */
+	 * @param pointer 触摸点 ID
+	 * @return 该触摸点是否正在触摸屏幕 */
 	public boolean isTouched (int pointer);
 
-	/** @return the pressure of the first pointer */
+	/** @return 第一个触摸点的压力值 */
 	public float getPressure ();
 
-	/** Returns the pressure of the given pointer, where 0 is untouched. On Android it should be up to 1.0, but it can go above
-	 * that slightly and its not consistent between devices. On iOS 1.0 is the normal touch and significantly more of hard touch.
-	 * Check relevant manufacturer documentation for details. Check availability with
-	 * {@link Input#isPeripheralAvailable(Peripheral)}. If not supported, returns 1.0 when touched.
+	/** 返回指定触摸点的压力值，0 表示未触摸。
+	 * Android 上最高约为 1.0，但可能略高且不同设备不一致。
+	 * iOS 上 1.0 为正常触摸。
+	 * 可用性可通过 {@link Input#isPeripheralAvailable(Peripheral)} 检查。
+	 * 如果不支持，触摸时返回 1.0。
 	 *
-	 * @param pointer the pointer id.
-	 * @return the pressure */
+	 * @param pointer 触摸点 ID
+	 * @return 压力值 */
 	public float getPressure (int pointer);
 
-	/** Whether a given button is pressed or not. Button constants can be found in {@link Buttons}. On Android only the
-	 * Buttons#LEFT constant is meaningful before version 4.0.
-	 * @param button the button to check.
-	 * @return whether the button is down or not. */
+	/** 检查指定的鼠标按钮是否按下。按钮常量见 {@link Buttons}。
+	 * Android 4.0 之前仅有 Buttons#LEFT 有意义。
+	 * @param button 要检查的按钮
+	 * @return 是否按下 */
 	public boolean isButtonPressed (int button);
 
-	/** Returns whether a given button has just been pressed. Button constants can be found in {@link Buttons}. On Android only the
-	 * Buttons#LEFT constant is meaningful before version 4.0. On WebGL (GWT), only LEFT, RIGHT and MIDDLE buttons are supported.
+	/** 检查指定的鼠标按钮是否刚刚被按下。按钮常量见 {@link Buttons}。
+	 * Android 4.0 之前仅有 Buttons#LEFT 有意义。
+	 * WebGL（GWT）上仅支持 LEFT、RIGHT 和 MIDDLE。
 	 *
-	 * @param button the button to check.
-	 * @return true or false. */
+	 * @param button 要检查的按钮
+	 * @return true 或 false */
 	public boolean isButtonJustPressed (int button);
 
-	/** Returns whether the key is pressed.
+	/** 检查键是否被按下。
 	 * 
-	 * @param key The key code as found in {@link Input.Keys}.
-	 * @return true or false. */
+	 * @param key 键码，参见 {@link Input.Keys}
+	 * @return true 或 false */
 	public boolean isKeyPressed (int key);
 
-	/** Returns whether the key has just been pressed.
+	/** 检查键是否刚刚被按下（仅触发一次）。
 	 * 
-	 * @param key The key code as found in {@link Input.Keys}.
-	 * @return true or false. */
+	 * @param key 键码，参见 {@link Input.Keys}
+	 * @return true 或 false */
 	public boolean isKeyJustPressed (int key);
 
-	/** System dependent method to input a string of text. A dialog box will be created with the given title and the given text as
-	 * a message for the user. Will use the Default keyboard type. Once the dialog has been closed the provided
-	 * {@link TextInputListener} will be called on the rendering thread.
+	/** 系统相关的文本输入方法。将创建一个带有指定标题和消息的对话框。
+	 * 使用默认键盘类型。对话框关闭后，提供的 {@link TextInputListener} 将在渲染线程上被调用。
 	 * 
-	 * @param listener The TextInputListener.
-	 * @param title The title of the text input dialog.
-	 * @param text The message presented to the user. */
+	 * @param listener 文本输入监听器
+	 * @param title 文本输入对话框的标题
+	 * @param text 向用户显示的提示文本 */
 	public void getTextInput (TextInputListener listener, String title, String text, String hint);
 
-	/** System dependent method to input a string of text. A dialog box will be created with the given title and the given text as
-	 * a message for the user. Once the dialog has been closed the provided {@link TextInputListener} will be called on the
-	 * rendering thread.
+	/** 系统相关的文本输入方法。将创建一个带有指定标题和消息的对话框。
+	 * 对话框关闭后，提供的 {@link TextInputListener} 将在渲染线程上被调用。
 	 *
-	 * @param listener The TextInputListener.
-	 * @param title The title of the text input dialog.
-	 * @param text The message presented to the user.
-	 * @param type which type of keyboard we wish to display */
+	 * @param listener 文本输入监听器
+	 * @param title 文本输入对话框的标题
+	 * @param text 向用户显示的提示文本
+	 * @param type 要显示的键盘类型 */
 	public void getTextInput (TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type);
 
-	/** Sets the on-screen keyboard visible if available. Will use the Default keyboard type.
+	/** 设置屏幕键盘是否可见（如果可用）。使用默认键盘类型。
 	 * 
-	 * @param visible visible or not */
+	 * @param visible 是否可见 */
 	public void setOnscreenKeyboardVisible (boolean visible);
 
-	/** Sets the on-screen keyboard visible if available.
+	/** 设置屏幕键盘是否可见（如果可用）。
 	 *
-	 * @param visible visible or not
-	 * @param type which type of keyboard we wish to display. Can be null when hiding */
+	 * @param visible 是否可见
+	 * @param type 要显示的键盘类型。隐藏时可传入 null */
 	public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type);
 
 	static interface InputStringValidator {
-		/** @param toCheck The string that should be validated
-		 * @return true, if the string is acceptable, false if not. */
+		/** @param toCheck 要验证的字符串
+		 * @return true 表示可接受，false 表示不可接受 */
 		boolean validate (String toCheck);
 	}
 
-	/** Sets the on-screen keyboard visible if available.
+	/** 使用原生输入配置打开屏幕键盘（如果可用）。
 	 *
-	 * @param configuration The configuration for the native input field */
+	 * @param configuration 原生输入字段的配置 */
 	public void openTextInputField (NativeInputConfiguration configuration);
 
-	/** Closes the native input field and applies the result to the input wrapper.
-	 * @param isConfirmative Whether the closing can be considered confirmative. Will be passed to the
-	 *           {@link NativeInputCloseCallback} */
+	/** 关闭原生输入字段并将结果应用到输入包装器。
+	 * @param isConfirmative 关闭是否可视为确认。将传递给 {@link NativeInputCloseCallback} */
 	public default void closeTextInputField (boolean isConfirmative) {
 		closeTextInputField(isConfirmative, null);
 	}
 
-	/** Closes the native input field and applies the result to the input wrapper.
-	 * @param isConfirmative Whether the closing can be considered confirmative. Will be passed to the
-	 *           {@link NativeInputCloseCallback}
-	 * @param callback An optional callback to also run, when the close was processed. Will be called on the main thread. Will be
-	 *           called after {@link NativeInputCloseCallback} */
+	/** 关闭原生输入字段并将结果应用到输入包装器。
+	 * @param isConfirmative 关闭是否可视为确认。将传递给 {@link NativeInputCloseCallback}
+	 * @param callback 可选的额外回调，在关闭处理完成后于主线程调用 */
 	public default void closeTextInputField (boolean isConfirmative, @Null NativeInputCloseCallback callback) {
 
 	}
 
-	/** Returns if a native input field is currently open */
+	/** @return 原生输入字段当前是否已打开 */
 	public default boolean isTextInputFieldOpened () {
 		return false;
 	}
 
 	static interface KeyboardHeightObserver {
-		/** This will be called always with the keyboard height as observed by the operating system. This will include the EditField
-		 * height when {@link Input#openTextInputField} is used. This will be called after
-		 * {@link KeyboardHeightObserver#onKeyboardShow} or {@link KeyboardHeightObserver#onKeyboardHide} */
+		/** 当操作系统检测到键盘高度变化时调用。在使用 {@link Input#openTextInputField} 时会包含编辑框高度。
+		 * 在 {@link KeyboardHeightObserver#onKeyboardShow} 或
+		 * {@link KeyboardHeightObserver#onKeyboardHide} 之后调用 */
 		void onKeyboardHeightChanged (int height);
 
-		/** This will be called, if the keyboard is visible and will report the visible height. This will include the EditField
-		 * height when {@link Input#openTextInputField} is used. This may be called multiple times without closing, if the keyboard
-		 * reshapes. On android SDK < 30 and floating keyboards, this will be always called, even if the keyboard got invisible.
-		 * There is no way to track the keyboard visibleness in this specific configuration */
+		/** 当键盘可见时调用，报告可见高度。在使用 {@link Input#openTextInputField} 时会包含编辑框高度。
+		 * 如果键盘调整形状，可能会被多次调用而无需关闭。
+		 * 在 Android SDK < 30 和浮动键盘上，即使键盘不可见也总是被调用。 */
 		void onKeyboardShow (int height);
 
-		/** This will be called, when the keyboard is getting invisible. This method is best-effort on pre-android sdk 30. This
-		 * method will never be called on android SDK < 30 and floating keyboards. */
+		/** 当键盘不可见时调用。在 Android SDK 30 之前为尽力而为。
+		 * 在 Android SDK < 30 和浮动键盘上永远不会被调用。 */
 		void onKeyboardHide ();
 	}
 
-	/** This will set a keyboard height callback. This will get called, whenever the keyboard height changes. Note: When using
-	 * openTextInputField, it will report the height of the native input field too. */
+	/** 设置键盘高度回调。每当键盘高度变化时被调用。
+	 * 注意：使用 openTextInputField 时，也会报告原生输入字段的高度。 */
 	public void setKeyboardHeightObserver (KeyboardHeightObserver observer);
 
 	public enum OnscreenKeyboardType {
 		Default, NumberPad, PhonePad, Email, Password, URI
 	}
 
-	/** Generates a simple haptic effect of a given duration or a vibration effect on devices without haptic capabilities. Note
-	 * that on Android backend you'll need the permission
-	 * <code> <uses-permission android:name="android.permission.VIBRATE" /></code> in your manifest file in order for this to work.
-	 * On iOS backend you'll need to set <code>useHaptics = true</code> for devices with haptics capabilities to use them.
+	/** 生成指定持续时间的简单触觉效果，或在没有触觉能力的设备上产生振动效果。
+	 * 注意在 Android 上需要在 manifest 中添加
+	 * <code> <uses-permission android:name="android.permission.VIBRATE" /></code> 权限。
+	 * 在 iOS 上需要设置 <code>useHaptics = true</code>。
 	 * 
-	 * @param milliseconds the number of milliseconds to vibrate. */
+	 * @param milliseconds 振动持续时间（毫秒） */
 	public void vibrate (int milliseconds);
 
-	/** Generates a simple haptic effect of a given duration and default amplitude. Note that on Android backend you'll need the
-	 * permission <code> <uses-permission android:name="android.permission.VIBRATE" /></code> in your manifest file in order for
-	 * this to work. On iOS backend you'll need to set <code>useHaptics = true</code> for devices with haptics capabilities to use
-	 * them.
+	/** 生成指定持续时间和默认振幅的简单触觉效果。
 	 *
-	 * @param milliseconds the duration of the haptics effect
-	 * @param fallback whether to use non-haptic vibrator on devices without haptics capabilities (or haptics disabled). Fallback
-	 *           non-haptic vibrations may ignore length parameter in some backends. */
+	 * @param milliseconds 触觉效果持续时间（毫秒）
+	 * @param fallback 在没有触觉能力的设备上是否使用非触觉振动器作为备选 */
 	public void vibrate (int milliseconds, boolean fallback);
 
-	/** Generates a simple haptic effect of a given duration and amplitude. Note that on Android backend you'll need the permission
-	 * <code> <uses-permission android:name="android.permission.VIBRATE" /></code> in your manifest file in order for this to work.
-	 * On iOS backend you'll need to set <code>useHaptics = true</code> for devices with haptics capabilities to use them.
+	/** 生成指定持续时间、振幅的简单触觉效果。
 	 *
-	 * @param milliseconds the duration of the haptics effect
-	 * @param amplitude the amplitude/strength of the haptics effect. Valid values in the range [0, 255].
-	 * @param fallback whether to use non-haptic vibrator on devices without haptics capabilities (or haptics disabled). Fallback
-	 *           non-haptic vibrations may ignore length and/or amplitude parameters in some backends. */
+	 * @param milliseconds 触觉效果持续时间（毫秒）
+	 * @param amplitude 触觉效果的强度。有效范围 [0, 255]
+	 * @param fallback 是否在没有触觉能力的设备上使用非触觉振动器备选 */
 	public void vibrate (int milliseconds, int amplitude, boolean fallback);
 
-	/** Generates a simple haptic effect of a type. VibrationTypes are length/amplitude haptic effect presets that depend on each
-	 * device and are defined by manufacturers. Should give most consistent results across devices and OSs. Note that on Android
-	 * backend you'll need the permission <code> <uses-permission android:name="android.permission.VIBRATE" /></code> in your
-	 * manifest file in order for this to work. On iOS backend you'll need to set <code>useHaptics = true</code> for devices with
-	 * haptics capabilities to use them.
+	/** 生成指定类型的简单触觉效果。VibrationTypes 是长度/振幅预设效果，因设备而异。
 	 *
-	 * @param vibrationType the type of vibration */
+	 * @param vibrationType 振动类型 */
 	public void vibrate (VibrationType vibrationType);
 
 	public enum VibrationType {
 		LIGHT, MEDIUM, HEAVY;
 	}
 
-	/** The azimuth is the angle of the device's orientation around the z-axis. The positive z-axis points towards the earths
-	 * center.
+	/** 获取设备的方位角（绕 z 轴的角度）。正 z 轴指向地心。
 	 * 
-	 * @see <a
-	 *      href="http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[], float[], float[], float[])">http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[],
-	 *      float[], float[], float[])</a>
-	 * @return the azimuth in degrees */
+	 * @return 方位角（度） */
 	public float getAzimuth ();
 
-	/** The pitch is the angle of the device's orientation around the x-axis. The positive x-axis roughly points to the west and is
-	 * orthogonal to the z- and y-axis.
-	 * @see <a
-	 *      href="http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[], float[], float[], float[])">http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[],
-	 *      float[], float[], float[])</a>
-	 * @return the pitch in degrees */
+	/** 获取设备的俯仰角（绕 x 轴的角度）。正 x 轴大致指向西方。
+	 * @return 俯仰角（度） */
 	public float getPitch ();
 
-	/** The roll is the angle of the device's orientation around the y-axis. The positive y-axis points to the magnetic north pole
-	 * of the earth.
-	 * @see <a
-	 *      href="http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[], float[], float[], float[])">http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[],
-	 *      float[], float[], float[])</a>
-	 * @return the roll in degrees */
+	/** 获取设备的横滚角（绕 y 轴的角度）。正 y 轴指向地磁北极。
+	 * @return 横滚角（度） */
 	public float getRoll ();
 
-	/** Returns the rotation matrix describing the devices rotation as per
-	 * <a href= "http://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[], float[],
-	 * float[], float[])" >SensorManager#getRotationMatrix(float[], float[], float[], float[])</a>. Does not manipulate the matrix
-	 * if the platform does not have an accelerometer.
-	 * @param matrix */
+	/** 返回描述设备旋转的旋转矩阵。如果平台没有加速度计，则不修改矩阵。
+	 * @param matrix 输出旋转矩阵的 float 数组 */
 	public void getRotationMatrix (float[] matrix);
 
-	/** @return the time of the event currently reported to the {@link InputProcessor}. */
+	/** @return 当前报告给 {@link InputProcessor} 的事件时间戳 */
 	public long getCurrentEventTime ();
 
-	/** Sets whether the given key on Android or GWT should be caught. No effect on other platforms. All keys that are not caught
-	 * may be handled by other apps or background processes on Android, or may trigger default browser behaviour on GWT. For
-	 * example, media or volume buttons are handled by background media players if present, or Space key triggers a scroll. All
-	 * keys you need to control your game should be caught to prevent unintended behaviour.
+	/** 设置在 Android 或 GWT 上是否捕获指定按键。在其他平台上无效果。
+	 * 未被捕获的按键可能被其他应用或后台进程处理（Android），或触发浏览器默认行为（GWT）。
+	 * 例如，媒体键或音量键会被后台媒体播放器处理，空格键可能触发滚动。
+	 * 游戏所需的所有按键都应该被捕获，以防止意外行为。
 	 *
-	 * @param keycode keycode to catch
-	 * @param catchKey whether to catch the given keycode */
+	 * @param keycode 要捕获的键码
+	 * @param catchKey 是否捕获该键码 */
 	public void setCatchKey (int keycode, boolean catchKey);
 
-	/** @param keycode keycode to check if caught
-	 * @return true if the given keycode is configured to be caught */
+	/** @param keycode 要检查的键码
+	 * @return 该键码是否被配置为捕获 */
 	public boolean isCatchKey (int keycode);
 
-	/** Sets the {@link InputProcessor} that will receive all touch and key input events. It will be called before the
-	 * {@link ApplicationListener#render()} method each frame.
+	/** 设置 {@link InputProcessor}，它将接收所有触摸和键盘输入事件。
+	 * 它会在每帧的 {@link ApplicationListener#render()} 之前被调用。
 	 * 
-	 * @param processor the InputProcessor */
+	 * @param processor InputProcessor */
 	public void setInputProcessor (InputProcessor processor);
 
-	/** @return the currently set {@link InputProcessor} or null. */
+	/** @return 当前设置的 {@link InputProcessor}，或 null */
 	public InputProcessor getInputProcessor ();
 
-	/** Queries whether a {@link Peripheral} is currently available. In case of Android and the {@link Peripheral#HardwareKeyboard}
-	 * this returns the whether the keyboard is currently slid out or not.
+	/** 查询 {@link Peripheral} 是否可用。
+	 * Android 上的 {@link Peripheral#HardwareKeyboard} 返回键盘当前是否滑出。
 	 * 
-	 * @param peripheral the {@link Peripheral}
-	 * @return whether the peripheral is available or not. */
+	 * @param peripheral 外设类型
+	 * @return 是否可用 */
 	public boolean isPeripheralAvailable (Peripheral peripheral);
 
-	/** @return the rotation of the device with respect to its native orientation. */
+	/** @return 设备相对于其原始方向的旋转角度 */
 	public int getRotation ();
 
-	/** @return the native orientation of the device. */
+	/** @return 设备的原始方向 */
 	public Orientation getNativeOrientation ();
 
 	public enum Orientation {
 		Landscape, Portrait
 	}
 
-	/** Only viable on the desktop. Will confine the mouse cursor location to the window and hide the mouse cursor. X and y
-	 * coordinates are still reported as if the mouse was not catched.
-	 * @param catched whether to catch or not to catch the mouse cursor */
+	/** 仅在桌面上有效。将鼠标光标限制在窗口内并隐藏鼠标光标。
+	 * 仍然报告 X/Y 坐标，就像鼠标未被捕获一样。
+	 * @param catched 是否捕获鼠标 */
 	public void setCursorCatched (boolean catched);
 
-	/** @return whether the mouse cursor is catched. */
+	/** @return 鼠标光标当前是否被捕获 */
 	public boolean isCursorCatched ();
 
-	/** Only viable on the desktop. Will set the mouse cursor location to the given window coordinates (origin top-left corner).
-	 * @param x the x-position
-	 * @param y the y-position */
+	/** 仅在桌面上有效。将鼠标光标位置设置到指定的窗口坐标（原点为左上角）。
+	 * @param x X 位置
+	 * @param y Y 位置 */
 	public void setCursorPosition (int x, int y);
 }

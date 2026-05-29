@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-/** A cell for a {@link Table}.
- * @author Nathan Sweet */
+/** <b>表格单元格，定义 Actor 在表格中的位置和大小。</b>
+* @author Nathan Sweet */
 public class Cell<T extends Actor> implements Poolable {
 	static private final Float zerof = 0f, onef = 1f;
 	static private final Integer zeroi = 0, onei = 1;

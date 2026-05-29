@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>纹理图集优化的 TMX 地图加载器，将瓦片图集合并到纹理图集中。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

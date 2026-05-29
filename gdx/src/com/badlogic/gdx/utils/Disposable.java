@@ -16,7 +16,8 @@
 
 package com.badlogic.gdx.utils;
 
-/** Interface for disposable resources.
+/** <b>可释放资源接口。</b>
+ * 需要显式释放的资源都应实现此接口。
  * @author mzechner */
 public interface Disposable {
 	/** Releases all resources of this object. */

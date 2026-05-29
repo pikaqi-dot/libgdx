@@ -24,7 +24,8 @@ import com.badlogic.gdx.utils.Disposable;
 
 /**
  * <p>
- * A Music instance represents a streamed audio file. The interface supports pausing, resuming and so on. When you are done with
+ * <b>音乐流接口。</b>
+ * Music 实例代表一个流式音频文件，从磁盘流式传输，不会完全加载到内存中，适合播放背景音乐。 When you are done with
  * using the Music instance you have to dispose it via the {@link #dispose()} method.
  * </p>
  * 

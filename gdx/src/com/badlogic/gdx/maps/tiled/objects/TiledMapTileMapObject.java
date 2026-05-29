@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>Tiled 地图对象，由单个瓦片表示的嵌入式地图对象。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

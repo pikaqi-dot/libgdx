@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /** A queue that allows one thread to call {@link #put(Object)} and another thread to call {@link #poll()}. Multiple threads must
+ * <b>无锁原子队列，用于线程间通信</b>
+ * 
  * not call these methods.
  * @author Matthias Mann */
 public class AtomicQueue<T> {

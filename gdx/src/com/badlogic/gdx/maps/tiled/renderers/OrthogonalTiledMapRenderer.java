@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>正交投影 Tiled 地图渲染器，标准俯视 2D 视角。</b>
+ * 
  * Copyright 2013 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

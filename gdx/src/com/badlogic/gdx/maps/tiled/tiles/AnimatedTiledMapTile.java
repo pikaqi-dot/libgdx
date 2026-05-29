@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>动画瓦片，按帧序列播放的动态瓦片。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

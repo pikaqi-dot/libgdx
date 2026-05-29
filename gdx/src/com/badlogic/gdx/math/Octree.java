@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>八叉树空间分割数据结构</b>
+ * 
  * Copyright 2020 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

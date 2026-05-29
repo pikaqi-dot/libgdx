@@ -16,6 +16,8 @@ package com.badlogic.gdx.utils;
 import java.util.Arrays;
 
 /** This is a near duplicate of {@link TimSort}, modified for use with arrays of objects that implement {@link Comparable},
+ * <b>Comparable TimSort 排序</b>
+ * 
  * instead of using explicit comparators.
  * 
  * <p>

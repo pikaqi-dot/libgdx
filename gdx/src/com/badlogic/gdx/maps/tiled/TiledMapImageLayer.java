@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>图片图层，显示单张图片作为图层。</b>
+ * 
  * Copyright 2015 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,90 +22,116 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 
+/** <b>Tiled 图片图层。</b>
+ * 在 Tiled 地图中显示单张图片作为图层（如背景图、Logo 等）。
+ * 与瓦片图层不同，图片图层不是由瓦片网格组成的，
+ * 而是一张完整的图片，可以设置位置和是否重复平铺。
+ * 继承自 {@link MapLayer}，支持透明度、色调等通用图层属性。 */
 public class TiledMapImageLayer extends MapLayer {
 
+	/** 图片图层的纹理区域 */
 	private TextureRegion region;
 
+	/** 图片的 X 位置（像素） */
 	private float x;
+	/** 图片的 Y 位置（像素） */
 	private float y;
+	/** 是否在 X 方向重复平铺 */
 	private boolean repeatX;
+	/** 是否在 Y 方向重复平铺 */
 	private boolean repeatY;
+	/** 图片是否支持透明度（由像素格式决定） */
 	private boolean supportsTransparency;
 
+	/** 创建图片图层
+	 * @param region 纹理区域
+	 * @param x X 位置
+	 * @param y Y 位置
+	 * @param repeatX X 方向重复
+	 * @param repeatY Y 方向重复 */
 	public TiledMapImageLayer (TextureRegion region, float x, float y, boolean repeatX, boolean repeatY) {
 		this.region = region;
 		this.x = x;
 		this.y = y;
 		this.repeatX = repeatX;
 		this.repeatY = repeatY;
+		// 检查纹理格式是否支持透明度
 		this.supportsTransparency = checkTransparencySupport(region);
 	}
 
-	/** TiledMap ImageLayers can support transparency through tint color if the image provided supports the proper pixel format.
-	 * Here we check to see if the file supports transparency by checking the format of the TextureData.
+	/** TiledMap 图片图层可以通过色调颜色支持透明度，
+	 * 前提是图片使用了正确的像素格式。
+	 * 此方法通过检查 TextureData 的格式来判断是否支持透明度。
 	 *
-	 * @param region TextureRegion of the ImageLayer
-	 * @return boolean */
+	 * @param region 图片图层的纹理区域
+	 * @return 是否支持透明度 */
 	private boolean checkTransparencySupport (TextureRegion region) {
 		Pixmap.Format format = region.getTexture().getTextureData().getFormat();
 		return format != null && formatHasAlpha(format);
 	}
 
-	// Check if pixel format supports alpha channel
+	/** 检查像素格式是否包含 alpha（透明度）通道
+	 * @param format 像素格式
+	 * @return 是否包含 alpha 通道 */
 	private boolean formatHasAlpha (Pixmap.Format format) {
 		switch (format) {
-		case Alpha:
-		case LuminanceAlpha:
-		case RGBA4444:
-		case RGBA8888:
+		case Alpha:             // 仅 alpha 通道
+		case LuminanceAlpha:    // 亮度 + alpha
+		case RGBA4444:          // RGBA 每通道4位
+		case RGBA8888:          // RGBA 每通道8位（标准真彩色+透明度）
 			return true;
 		default:
 			return false;
 		}
 	}
 
-	public boolean supportsTransparency () {
-		return supportsTransparency;
-	}
-
+	/** @return 图片图层的纹理区域 */
 	public TextureRegion getTextureRegion () {
 		return region;
 	}
 
-	public void setTextureRegion (TextureRegion region) {
-		this.region = region;
-	}
-
+	/** @return 图片的 X 位置 */
 	public float getX () {
 		return x;
 	}
 
+	/** @param x 图片的新 X 位置 */
 	public void setX (float x) {
 		this.x = x;
 	}
 
+	/** @return 图片的 Y 位置 */
 	public float getY () {
 		return y;
 	}
 
+	/** @param y 图片的新 Y 位置 */
 	public void setY (float y) {
 		this.y = y;
 	}
 
+	/** @return 是否在 X 方向重复平铺 */
 	public boolean isRepeatX () {
 		return repeatX;
 	}
 
+	/** @param repeatX 设置 X 方向重复平铺 */
 	public void setRepeatX (boolean repeatX) {
 		this.repeatX = repeatX;
 	}
 
+	/** @return 是否在 Y 方向重复平铺 */
 	public boolean isRepeatY () {
 		return repeatY;
 	}
 
+	/** @param repeatY 设置 Y 方向重复平铺 */
 	public void setRepeatY (boolean repeatY) {
 		this.repeatY = repeatY;
 	}
 
+	/** @return 图片是否支持透明度 */
+	public boolean supportsTransparency () {
+		return supportsTransparency;
+	}
 }

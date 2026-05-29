@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>折线，由顶点数组定义</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

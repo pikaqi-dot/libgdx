@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>矩形地图对象，由位置和宽高定义的矩形区域。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

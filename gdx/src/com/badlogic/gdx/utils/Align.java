@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>对齐常量，如左/右/上/下/居中</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -19,69 +19,65 @@ package com.badlogic.gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-/** Provides standard access to the filesystem, classpath, Android app storage (internal and external), and Android assets
- * directory.
+/** <b>文件系统访问接口。</b>
+ * 提供对文件系统、classpath、Android 应用存储（内部和外部）以及 Android assets 目录的标准访问。
  * @author mzechner
  * @author Nathan Sweet */
 public interface Files {
-	/** Indicates how to resolve a path to a file.
+	/** 枚举：如何解析文件路径。
 	 * @author mzechner
 	 * @author Nathan Sweet */
 	public enum FileType {
-		/** Path relative to the root of the classpath. Classpath files are always readonly. Note that classpath files are not
-		 * compatible with some functionality on Android, such as {@link Audio#newSound(FileHandle)} and
-		 * {@link Audio#newMusic(FileHandle)}. */
+		/** 相对于 classpath 根目录的路径。Classpath 文件始终为只读。
+		 * 注意：classpath 文件与 Android 上的一些功能不兼容，例如
+		 * {@link Audio#newSound(FileHandle)} 和 {@link Audio#newMusic(FileHandle)}。 */
 		Classpath,
 
-		/** Path relative to the asset directory on Android and to the application's root directory on the desktop. On the desktop,
-		 * if the file is not found, then the classpath is checked. This enables files to be found when using JWS or applets.
-		 * Internal files are always readonly. */
+		/** 相对于 Android 上 asset 目录的路径，或桌面上应用根目录的路径。
+		 * 在桌面上，如果文件未找到，会检查 classpath。这使得在使用 JWS 或 applet 时也能找到文件。
+		 * 内部文件始终为只读。 */
 		Internal,
 
-		/** Path relative to the root of the app external storage on Android and to the home directory of the current user on the
-		 * desktop. */
+		/** 相对于 Android 上应用外部存储根目录的路径，或桌面上当前用户主目录的路径。 */
 		External,
 
-		/** Path that is a fully qualified, absolute filesystem path. To ensure portability across platforms use absolute files only
-		 * when absolutely (heh) necessary. */
+		/** 完全限定的绝对文件系统路径。为保持跨平台可移植性，仅在绝对必要时使用绝对文件。 */
 		Absolute,
 
-		/** Path relative to the private files directory on Android and to the application's root directory on the desktop. */
+		/** 相对于 Android 上应用私有文件目录的路径，或桌面上应用根目录的路径。 */
 		Local;
 	}
 
-	/** Returns a handle representing a file or directory.
-	 * @param type Determines how the path is resolved.
-	 * @throws GdxRuntimeException if the type is classpath or internal and the file does not exist.
+	/** 返回代表文件或目录的句柄。
+	 * @param type 决定路径的解析方式。
+	 * @throws GdxRuntimeException 如果是 classpath 或 internal 类型且文件不存在。
 	 * @see FileType */
 	public FileHandle getFileHandle (String path, FileType type);
 
-	/** Convenience method that returns a {@link FileType#Classpath} file handle. */
+	/** 便捷方法：返回 {@link FileType#Classpath} 类型的文件句柄。 */
 	public FileHandle classpath (String path);
 
-	/** Convenience method that returns a {@link FileType#Internal} file handle. */
+	/** 便捷方法：返回 {@link FileType#Internal} 类型的文件句柄。 */
 	public FileHandle internal (String path);
 
-	/** Convenience method that returns a {@link FileType#External} file handle. */
+	/** 便捷方法：返回 {@link FileType#External} 类型的文件句柄。 */
 	public FileHandle external (String path);
 
-	/** Convenience method that returns a {@link FileType#Absolute} file handle. */
+	/** 便捷方法：返回 {@link FileType#Absolute} 类型的文件句柄。 */
 	public FileHandle absolute (String path);
 
-	/** Convenience method that returns a {@link FileType#Local} file handle. */
+	/** 便捷方法：返回 {@link FileType#Local} 类型的文件句柄。 */
 	public FileHandle local (String path);
 
-	/** Returns the external storage path directory. This is the app external storage on Android and the home directory of the
-	 * current user on the desktop. */
+	/** 返回外部存储路径。Android 上为应用外部存储，桌面上为当前用户主目录。 */
 	public String getExternalStoragePath ();
 
-	/** Returns true if the external storage is ready for file IO. */
+	/** 返回外部存储是否已准备好进行文件 I/O 操作。 */
 	public boolean isExternalStorageAvailable ();
 
-	/** Returns the local storage path directory. This is the private files directory on Android and the directory of the jar on
-	 * the desktop. */
+	/** 返回本地存储路径。Android 上为私有文件目录，桌面上为 jar 所在目录。 */
 	public String getLocalStoragePath ();
 
-	/** Returns true if the local storage is ready for file IO. */
+	/** 返回本地存储是否已准备好进行文件 I/O 操作。 */
 	public boolean isLocalStorageAvailable ();
 }

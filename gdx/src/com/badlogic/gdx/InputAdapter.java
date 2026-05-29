@@ -16,7 +16,9 @@
 
 package com.badlogic.gdx;
 
-/** An adapter class for {@link InputProcessor}. You can derive from this and only override what you are interested in.
+/** <b>输入处理器适配器。</b>
+ * {@link InputProcessor} 的适配器类。从此类派生并仅重写你需要的方法。
+ * 所有方法默认返回 false，表示未处理事件。
  * 
  * @author mzechner */
 public class InputAdapter implements InputProcessor {

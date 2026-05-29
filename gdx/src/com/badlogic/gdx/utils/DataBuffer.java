@@ -4,6 +4,8 @@ package com.badlogic.gdx.utils;
 import com.badlogic.gdx.utils.StreamUtils.OptimizedByteArrayOutputStream;
 
 /** Extends {@link DataOutput} that writes bytes to a byte array.
+ * <b>数据缓冲区</b>
+ * 
  * @author Nathan Sweet */
 public class DataBuffer extends DataOutput {
 	private final OptimizedByteArrayOutputStream outStream;

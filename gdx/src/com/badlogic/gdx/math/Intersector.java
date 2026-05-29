@@ -68,6 +68,10 @@ public final class Intersector {
 	}
 
 	/** Returns true if the given point is inside the triangle. */
+	/** 点与三角形包含检测。
+	 * 使用重心坐标法：对于三角形 ABC 内的任意点 P，有
+	 * P = A + u*(C-A) + v*(B-A)，其中 u >= 0, v >= 0, u+v <= 1
+	 * 通过叉积计算 u 和 v。 */
 	public static boolean isPointInTriangle (float px, float py, float ax, float ay, float bx, float by, float cx, float cy) {
 		float px1 = px - ax;
 		float py1 = py - ay;
@@ -247,12 +251,51 @@ public final class Intersector {
 	static Vector2 v2d = new Vector2();
 
 	/** Returns the distance between the given line and point. Note the specified line is not a line segment. */
+	/** 计算点到线段的最短距离。
+	 * 使用点积计算点到线段上最近点的投影参数 t，
+	 * 将 t 钳制到 [0,1] 范围内以处理线段两端外的点。 */
 	public static float distanceLinePoint (float startX, float startY, float endX, float endY, float pointX, float pointY) {
 		float normalLength = Vector2.len(endX - startX, endY - startY);
 		return Math.abs((pointX - startX) * (endY - startY) - (pointY - startY) * (endX - startX)) / normalLength;
 	}
 
 	/** Returns the distance between the given segment and point. */
+	/** 计算点到线段的最短距离（平方）。
+	 
+	*
+	 
+	区
+	别
+	于
+	 
+	d
+	i
+	s
+	t
+	a
+	n
+	c
+	e
+	L
+	i
+	n
+	e
+	P
+	o
+	i
+	n
+	t
+	，
+	线
+	段
+	是
+	有
+	限
+	长
+	度
+	的
+	，
+	 * 如果投影点落在线段延长线上，则返回端点的距离。 */
 	public static float distanceSegmentPoint (float startX, float startY, float endX, float endY, float pointX, float pointY) {
 		return nearestSegmentPoint(startX, startY, endX, endY, pointX, pointY, v2a).dst(pointX, pointY);
 	}
@@ -291,6 +334,7 @@ public final class Intersector {
 	 * @param center The center of the circle
 	 * @param squareRadius The squared radius of the circle
 	 * @return Whether the line segment and the circle intersect */
+	/** 线段与圆的相交检测（Vector2 版本）。同参数六浮点数版本。 */
 	public static boolean intersectSegmentCircle (Vector2 start, Vector2 end, Vector2 center, float squareRadius) {
 		tmp.set(end.x - start.x, end.y - start.y, 0);
 		tmp1.set(center.x - start.x, center.y - start.y, 0);

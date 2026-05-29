@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>扩展视口，保持比例并填充多余空间</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

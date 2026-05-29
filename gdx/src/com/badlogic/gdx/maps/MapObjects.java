@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>地图对象集合，支持按名称查找对象。</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

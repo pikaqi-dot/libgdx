@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>等距投影 Tiled 地图渲染器，45度伪 3D 视角。</b>
+ * 
  * Copyright 2013 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

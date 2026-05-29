@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>基于引用相等性的对象集合</b>
+ * 
  * Copyright 2026 See AUTHORS file.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

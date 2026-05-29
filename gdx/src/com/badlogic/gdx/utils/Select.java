@@ -1,4 +1,6 @@
 /*******************************************************************************
+ * <b>选择算法，查找第 k 小/大元素</b>
+ * 
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
